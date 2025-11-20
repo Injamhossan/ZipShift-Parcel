@@ -2,8 +2,10 @@ import React from "react";
 import Banner from "../../components/Hero/Banner";
 import HowItWork from "../../components/HowItWork/HowItWork";
 import ServicesShowcase from "../../components/Services/ServicesShowcase";
-import Partners from "../../components/Partners/Partners";
 import SupportHighlights from "../../components/SupportHighlights/SupportHighlights";
+import MerchantCta from "../../components/MerchantCta/MerchantCta";
+import Partners from "../../components/Partners/Partners";
+import Testimonials from "../../components/Testimonials/Testimonials";
 
 const Home = () => {
   return (
@@ -13,6 +15,8 @@ const Home = () => {
       <ServicesShowcase />
       <Partners />
       <SupportHighlights />
+      <MerchantCta />
+      <Testimonials />
     </div>
   );
 };

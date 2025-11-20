@@ -28,7 +28,7 @@ const highlights = [
 
 const SupportHighlights = () => {
   return (
-    <section className="py-16">
+    <section className="pt-16">
       <div className="mx-auto max-w-[1200px] px-4 sm:px-6">
         <div className="border-t border-dashed border-[#0e5a4d]/40" />
 

@@ -1,6 +1,7 @@
 import React from "react";
 import liveTracking from "../../assets/live-tracking.png";
 import safeDelivery from "../../assets/safe-delivery.png";
+import Support from "../../assets/support.svg"
 
 const highlights = [
   {
@@ -22,7 +23,7 @@ const highlights = [
     title: "24/7 Call Center Support",
     description:
       "A dedicated support team is always on standby to assist with questions, updates, or delivery concerns—anytime you need us.",
-    image: safeDelivery,
+    image: Support,
   },
 ];
 

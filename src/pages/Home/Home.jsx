@@ -6,6 +6,7 @@ import SupportHighlights from "../../components/SupportHighlights/SupportHighlig
 import MerchantCta from "../../components/MerchantCta/MerchantCta";
 import Partners from "../../components/Partners/Partners";
 import Testimonials from "../../components/Testimonials/Testimonials";
+import Faq from "../../components/FAQ/Faq";
 
 const Home = () => {
   return (
@@ -17,6 +18,7 @@ const Home = () => {
       <SupportHighlights />
       <MerchantCta />
       <Testimonials />
+      <Faq />
     </div>
   );
 };

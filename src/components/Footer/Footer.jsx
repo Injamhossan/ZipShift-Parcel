@@ -21,8 +21,8 @@ const Footer = () => {
     return (
     <div>
       <footer
-        className="footer footer-horizontal footer-center bg-black text-primary-content p-10 mx-auto max-w-[1800px] rounded-2xl py-5 lg:py-20 mb-10"
-      >
+        className="footer footer-horizontal footer-center bg-black text-primary-content p-10 mx-auto max-w-[1800px] rounded-4xl py-5 lg:py-20 mb-10"
+      > 
         <aside>
           <div className="flex items-center pb-5">
             <img

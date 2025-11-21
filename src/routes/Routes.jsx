@@ -9,6 +9,8 @@ import Coverage from '../pages/Coverage/Coverage';
 import ContactUs from '../pages/Contact/ContactUs';
 import Blog from '../pages/Blog/Blog';
 import AboutUs from '../pages/About Us/AboutUs';
+import Login from '../pages/Login/Login';
+import Register from '../pages/Register/Register';
 
 
 
@@ -46,6 +48,14 @@ export const router = createBrowserRouter([
       {
         path: 'blog',
         Component: Blog,
+      },
+      {
+        path: 'login',
+        Component: Login,
+      },
+      {
+        path: 'register',
+        Component: Register,
       },
     ]
   },

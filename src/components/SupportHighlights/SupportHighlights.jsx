@@ -37,7 +37,7 @@ const SupportHighlights = () => {
           {highlights.map((item) => (
             <article
               key={item.id}
-              className="flex flex-col gap-6 rounded-[32px] bg-white px-6 py-8 shadow-sm sm:px-10 md:flex-row md:items-center"
+              className="flex flex-col gap-6 rounded-4xl bg-white px-6 py-8 shadow-sm sm:px-10 md:flex-row md:items-center"
             >
               <div className="mx-auto flex w-full max-w-[220px] items-center justify-center md:mx-0 md:max-w-[260px]">
                 <img

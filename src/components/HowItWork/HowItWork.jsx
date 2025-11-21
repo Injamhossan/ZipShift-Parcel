@@ -46,7 +46,7 @@ const HowItWork = () => {
                   className="h-8 w-8 object-contain"
                 />
               </div>
-              <h3 className="mt-6 text-lg font-semibold text-[#0b3e3a]">
+              <h3 className="mt-6 text-[20px] font-bold text-[#0b3e3a]">
                 {step.title}
               </h3>
               <p className="mt-3 text-sm text-[#4b6160]">{step.description}</p>

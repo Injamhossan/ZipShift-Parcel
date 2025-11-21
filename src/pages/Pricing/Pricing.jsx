@@ -43,7 +43,7 @@ const plans = [
 
 const Pricing = () => {
   return (
-    <main className="bg-[#e9eff2] py-16">
+    <main className="py-16">
       <div className="mx-auto max-w-[1200px] px-4 text-center sm:px-6">
         <p className="text-sm uppercase tracking-[0.35em] text-[#0f5a4d]">
           Pricing
@@ -60,17 +60,17 @@ const Pricing = () => {
           {plans.map((plan) => (
             <article
               key={plan.id}
-              className={`flex flex-col rounded-[32px] border border-[#d2e3df] bg-white p-8 text-left shadow-sm transition hover:-translate-y-1 hover:shadow-lg ${
+              className={`flex flex-col rounded-4xl border border-[#d2e3df] bg-white p-8 text-left shadow-sm transition hover:-translate-y-1 hover:shadow-lg ${
                 plan.featured ? "bg-[#0f4036] text-white" : ""
               }`}
             >
-              <p className="text-sm uppercase tracking-[0.3em]">
+              <p className="text-sm uppercase text-black tracking-[0.3em]">
                 {plan.name}
               </p>
-              <p className="mt-4 text-4xl font-bold">{plan.price}</p>
+              <p className="mt-4 text-4xl text-[#03373D] font-bold">{plan.price}</p>
               <p
                 className={`mt-3 text-base ${
-                  plan.featured ? "text-[#dff6ec]" : "text-[#4f6260]"
+                  plan.featured ? "text-black" : "text-black"
                 }`}
               >
                 {plan.summary}
@@ -80,7 +80,7 @@ const Pricing = () => {
                   <p
                     key={feature}
                     className={`flex items-center gap-3 text-sm ${
-                      plan.featured ? "text-[#d7ede5]" : "text-[#4f6260]"
+                      plan.featured ? "text-[#4f6260]" : "text-[#4f6260]"
                     }`}
                   >
                     <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[#c4f243] text-[#062f29] text-xs font-bold">

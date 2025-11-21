@@ -64,7 +64,7 @@ export const Banner = () => {
               onClick={onClickHandler}
               title={label}
               className={`${indicatorBase} ${
-                isSelected ? "w-[64px] bg-[#0d3f34]" : "w-[64px] bg-[#c5d2d0]"
+                isSelected ? "w-16 bg-[#0d3f34]" : "w-16 bg-[#c5d2d0]"
               }`}
               aria-label={`Go to slide ${index + 1}`}
             />

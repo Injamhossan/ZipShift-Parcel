@@ -35,7 +35,7 @@ const posts = [
 
 const Blog = () => {
   return (
-    <main className="bg-[#e9eff2] py-16">
+    <main className="py-16">
       <div className="mx-auto max-w-[1100px] px-4 sm:px-6">
         <section className="text-center">
           <p className="text-sm uppercase tracking-[0.35em] text-[#0f5a4d]">

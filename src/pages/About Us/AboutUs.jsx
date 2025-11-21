@@ -40,7 +40,7 @@ const timeline = [
 
 const AboutUs = () => {
   return (
-    <main className="bg-[#e9eff2] py-16">
+    <main className="py-16">
       <div className="mx-auto max-w-[1200px] px-4 sm:px-6">
         <section className="grid gap-10 rounded-[40px] bg-white p-8 shadow-lg sm:p-12 lg:grid-cols-2">
           <div>

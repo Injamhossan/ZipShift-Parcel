@@ -9,7 +9,6 @@ import Youtube from "../../assets/Social/youtube.png"
 const Footer = () => {
   const links = (
     <>
-      <NavLink to={"/"}>Home</NavLink>
       <NavLink to={"/services"}>Services</NavLink>
       <NavLink to={"/coverage"}>Coverage</NavLink>
       <NavLink to={"/aboutus"}>About Us</NavLink>

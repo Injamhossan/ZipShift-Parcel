@@ -53,7 +53,7 @@ const workflow = [
 
 const Services = () => {
   return (
-    <main className="bg-[#e9eff2] py-16">
+    <main className="py-16">
       <div className="mx-auto max-w-[1200px] px-4 sm:px-6">
         <section className="rounded-[40px] bg-[#032f35] px-8 py-12 text-white shadow-xl sm:px-12">
           <div className="max-w-3xl">

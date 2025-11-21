@@ -22,7 +22,7 @@ const channels = [
 
 const ContactUs = () => {
   return (
-    <main className="bg-[#e9eff2] py-16">
+    <main className="py-16">
       <div className="mx-auto max-w-[1100px] px-4 sm:px-6">
         <section className="rounded-[40px] bg-white p-8 shadow-lg sm:p-12">
           <div className="text-center">
@@ -64,17 +64,17 @@ const ContactUs = () => {
                 <input
                   type="text"
                   placeholder="Full name"
-                  className="w-full rounded-2xl border border-[#d2e3df] bg-[#f7fbfa] px-4 py-3 outline-none"
+                  className="w-full rounded-2xl border border-[#d2e3df] bg-[#f7fbfa] px-4 py-3 outline-none text-black"
                 />
                 <input
                   type="email"
                   placeholder="Email address"
-                  className="w-full rounded-2xl border border-[#d2e3df] bg-[#f7fbfa] px-4 py-3 outline-none"
+                  className="w-full rounded-2xl border border-[#d2e3df] bg-[#f7fbfa] px-4 py-3 outline-none text-black"
                 />
                 <textarea
                   rows="4"
                   placeholder="Tell us about your request"
-                  className="w-full rounded-2xl border border-[#d2e3df] bg-[#f7fbfa] px-4 py-3 outline-none"
+                  className="w-full rounded-2xl border border-[#d2e3df] bg-[#f7fbfa] px-4 py-3 outline-none text-black"
                 />
                 <button className="w-full rounded-full bg-[#c4f243] py-3 font-semibold text-[#062f29]">
                   Submit message

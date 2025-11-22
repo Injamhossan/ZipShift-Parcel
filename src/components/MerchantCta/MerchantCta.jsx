@@ -4,7 +4,7 @@ import merchantIllustration from "../../assets/location-merchant.png";
 const MerchantCta = () => {
   return (
     <section className="py-10">
-      <div className="mx-auto max-w-[1200px] px-4 sm:px-6">
+      <div className="mx-auto max-w-[1800px] px-4 sm:px-6">
         <div className="border-[#0e5a4d]/40" />
         <div className="mt-8 overflow-hidden rounded-[48px] bg-[#012f36] text-white shadow-lg">
           <div className="relative flex flex-col gap-10 px-8 py-12 sm:px-12 lg:flex-row lg:items-center">

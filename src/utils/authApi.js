@@ -49,10 +49,25 @@ export const authApi = {
   // Register user
   register: async (userData) => {
     try {
+      console.log('Sending registration request to backend:', {
+        url: `${API_URL}/auth/register`,
+        data: { ...userData, password: userData.password ? '***' : undefined },
+      });
+      
       const response = await api.post('/auth/register', userData);
+      
+      console.log('Backend registration response:', response.data);
+      
       return response.data;
     } catch (error) {
-      const message = error.response?.data?.message || 'Registration failed';
+      console.error('Registration API error:', {
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data,
+        message: error.message,
+      });
+      
+      const message = error.response?.data?.message || error.response?.data?.error || 'Registration failed';
       toast.error(message);
       throw error;
     }
@@ -72,12 +87,8 @@ export const authApi = {
 
   // Get current user
   getCurrentUser: async () => {
-    try {
-      const response = await api.get('/auth/me');
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
+    const response = await api.get('/auth/me');
+    return response.data;
   },
 
   // Update user profile
@@ -87,6 +98,100 @@ export const authApi = {
       return response.data;
     } catch (error) {
       const message = error.response?.data?.message || 'Update failed';
+      toast.error(message);
+      throw error;
+    }
+  },
+};
+
+// General API functions for testing and parcel management
+export const parcelApi = {
+  // Test server connection
+  testConnection: async () => {
+    try {
+      const response = await api.get('/test');
+      return response.data;
+    } catch (error) {
+      console.error('Connection test error:', error);
+      throw error;
+    }
+  },
+
+  // Health check
+  healthCheck: async () => {
+    try {
+      const response = await api.get('/health');
+      return response.data;
+    } catch (error) {
+      console.error('Health check error:', error);
+      throw error;
+    }
+  },
+
+  // Get all parcels
+  getAllParcels: async () => {
+    try {
+      const response = await api.get('/parcels');
+      return response.data;
+    } catch (error) {
+      console.error('Get parcels error:', error);
+      throw error;
+    }
+  },
+
+  // Get all riders
+  getAllRiders: async () => {
+    try {
+      const response = await api.get('/riders');
+      return response.data;
+    } catch (error) {
+      console.error('Get riders error:', error);
+      throw error;
+    }
+  },
+
+  // Create parcel
+  createParcel: async (parcelData) => {
+    try {
+      const response = await api.post('/parcels', parcelData);
+      return response.data;
+    } catch (error) {
+      const message = error.response?.data?.message || 'Failed to create parcel';
+      toast.error(message);
+      throw error;
+    }
+  },
+
+  // Get parcel by ID
+  getParcelById: async (parcelId) => {
+    try {
+      const response = await api.get(`/parcels/${parcelId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Get parcel error:', error);
+      throw error;
+    }
+  },
+
+  // Update parcel
+  updateParcel: async (parcelId, parcelData) => {
+    try {
+      const response = await api.put(`/parcels/${parcelId}`, parcelData);
+      return response.data;
+    } catch (error) {
+      const message = error.response?.data?.message || 'Failed to update parcel';
+      toast.error(message);
+      throw error;
+    }
+  },
+
+  // Delete parcel
+  deleteParcel: async (parcelId) => {
+    try {
+      const response = await api.delete(`/parcels/${parcelId}`);
+      return response.data;
+    } catch (error) {
+      const message = error.response?.data?.message || 'Failed to delete parcel';
       toast.error(message);
       throw error;
     }

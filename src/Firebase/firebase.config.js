@@ -1,23 +1,22 @@
+// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
-// Use env variables
+// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey:import.meta.env.REACT_APP_FIREBASE_API_KEY,
-  authDomain:import.meta.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
-  projectId:import.meta.env.REACT_APP_FIREBASE_PROJECT_ID,
-  storageBucket:import.meta.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId:import.meta.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
-  appId:import.meta.env.REACT_APP_FIREBASE_APP_ID,
-  measurementId:import.meta.env.REACT_APP_FIREBASE_MEASUREMENT_ID
+  apiKey: "AIzaSyAOELRNqVcjBp2k2cJY_9LO0hp-XJMxjsc",
+  authDomain: "zip-shift-two.firebaseapp.com",
+  projectId: "zip-shift-two",
+  storageBucket: "zip-shift-two.firebasestorage.app",
+  messagingSenderId: "525694339710",
+  appId: "1:525694339710:web:34ff2eba8e1b97ca85a62f"
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 const auth = getAuth(app);
 
-
-
-export { app, analytics, auth };
+export { auth };
+export default app;

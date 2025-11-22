@@ -3,15 +3,23 @@ import { NavLink, Link, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import NavLogo from "../../assets/logo.png";
 import useAuthStore from "../../store/authStore";
+import { signOutUser } from "../../utils/firebaseAuth";
 
 const Navbar = () => {
   const { isAuthenticated, user, logout } = useAuthStore();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    logout();
-    toast.success("Logged out successfully");
-    navigate("/");
+  const handleLogout = async () => {
+    try {
+      await signOutUser();
+      logout();
+      toast.success("Logged out successfully");
+      navigate("/");
+    } catch (error) {
+      console.error("Logout error:", error);
+      logout();
+      navigate("/");
+    }
   };
 
   const links = (
@@ -49,7 +57,7 @@ const Navbar = () => {
             </div>
             <ul
               tabIndex="-1"
-              className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow gap-5"
+              className="menu menu-sm dropdown-content bg-white rounded-box z-1 mt-3 w-52 p-2 shadow gap-5"
             >
               {links}
             </ul>
@@ -82,19 +90,36 @@ const Navbar = () => {
                   className="flex items-center gap-2 cursor-pointer"
                 >
                   <div className="avatar placeholder">
-                    <div className="bg-[#CAEB66] text-black rounded-full w-10 h-10 flex items-center justify-center font-bold">
-                      {user?.name?.charAt(0)?.toUpperCase() || "U"}
-                    </div>
+                    {user?.photoURL ? (
+                      <div className="bg-[#CAEB66] text-black rounded-full w-10 h-10">
+                        <img
+                          src={user.photoURL}
+                          alt={user.displayName || user.name || "User"}
+                          className="w-full h-full rounded-full object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div className="bg-[#CAEB66] text-black rounded-full w-10 h-10 flex items-center justify-center font-bold">
+                        {(user?.displayName || user?.name || user?.email || "U")
+                          .charAt(0)
+                          .toUpperCase()}
+                      </div>
+                    )}
                   </div>
                   <span className="text-[#606060] font-medium hidden md:block">
-                    {user?.name || "User"}
+                    {user?.displayName || user?.name || "User"}
                   </span>
                   <i className="fa-solid fa-chevron-down text-[#606060]"></i>
                 </div>
                 <ul
                   tabIndex={0}
-                  className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-lg mt-2"
+                  className="dropdown-content menu bg-white rounded-box z-1 w-52 p-2 shadow-lg mt-2"
                 >
+                  <li>
+                    <Link to="/dashboard" className="text-[#606060]">
+                      Dashboard
+                    </Link>
+                  </li>
                   <li>
                     <a className="text-[#606060]">Profile</a>
                   </li>

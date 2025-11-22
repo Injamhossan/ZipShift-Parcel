@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { authApi } from '../../utils/authApi';
+import { signUpWithEmail, signInWithGoogle } from '../../utils/firebaseAuth';
 import useAuthStore from '../../store/authStore';
 import authImage from '../../assets/authImage.png';
 import { Loader1 } from '../../components/Loader/Loader';
@@ -23,21 +24,123 @@ const Register = () => {
   const onSubmit = async (data) => {
     setLoading(true);
     try {
-      const response = await authApi.register(data);
-      if (response.success) {
-        login(response.user, response.token);
-        toast.success('Registration successful!');
-        navigate('/');
+      // Try Firebase auth first, fallback to API
+      try {
+        const response = await signUpWithEmail(
+          data.email,
+          data.password,
+          data.name,
+          data.phone
+        );
+        if (response.success) {
+          // Save user to backend database
+          try {
+            console.log('Saving user to backend database:', {
+              name: data.name,
+              email: data.email,
+              phone: data.phone,
+              uid: response.user.uid,
+            });
+            
+            const backendResponse = await authApi.register({
+              name: data.name,
+              email: data.email,
+              phone: data.phone,
+              uid: response.user.uid, // Firebase UID
+              password: data.password, // Send password for backend to hash
+            });
+            
+            console.log('User saved to backend database:', backendResponse);
+            toast.success('User registered successfully in database!');
+          } catch (backendError) {
+            // If backend save fails, show error but don't block registration
+            console.error('Failed to save user to backend database:', backendError);
+            console.error('Error details:', backendError.response?.data || backendError.message);
+            toast.error('Registration successful but failed to save to database. Please contact support.');
+            // User is still registered in Firebase, so continue
+          }
+          
+          login(response.user, response.token);
+          toast.success('Registration successful!');
+          navigate('/dashboard');
+        }
+      } catch (firebaseError) {
+        // Fallback to API if Firebase fails
+        console.log('Firebase registration failed, trying backend API:', firebaseError);
+        try {
+          const response = await authApi.register({
+            name: data.name,
+            email: data.email,
+            phone: data.phone,
+            password: data.password,
+          });
+          
+          console.log('Backend registration response:', response);
+          
+          if (response.success) {
+            login(response.user, response.token);
+            toast.success('Registration successful!');
+            navigate('/dashboard');
+          }
+        } catch (apiError) {
+          console.error('Backend API registration error:', apiError);
+          console.error('Error details:', apiError.response?.data || apiError.message);
+          throw apiError;
+        }
       }
     } catch (error) {
       console.error('Registration error:', error);
+      toast.error('Registration failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setLoading(true);
+    try {
+      const response = await signInWithGoogle();
+      if (response.success) {
+        // Save user to backend database
+        try {
+          console.log('Saving Google user to backend database:', {
+            name: response.user.displayName,
+            email: response.user.email,
+            uid: response.user.uid,
+          });
+          
+          const backendResponse = await authApi.register({
+            name: response.user.displayName || 'User',
+            email: response.user.email,
+            phone: response.user.phoneNumber || '',
+            uid: response.user.uid, // Firebase UID
+            // No password for Google sign-in
+          });
+          
+          console.log('Google user saved to backend database:', backendResponse);
+          toast.success('User registered successfully in database!');
+        } catch (backendError) {
+          // If backend save fails, show error but don't block registration
+          console.error('Failed to save Google user to backend database:', backendError);
+          console.error('Error details:', backendError.response?.data || backendError.message);
+          toast.error('Registration successful but failed to save to database. Please contact support.');
+          // User is still registered in Firebase, so continue
+        }
+        
+        login(response.user, response.token);
+        toast.success('Registration successful!');
+        navigate('/dashboard');
+      }
+    } catch (error) {
+      console.error('Google sign-in error:', error);
+      toast.error('Google sign-in failed. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-[1800px] rounded-2xl s flex items-center justify-center bg-gray-50 py-12 px-4 my-5 sm:px-6 lg:px-8">
       <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
         {/* Left Side - Image */}
         <div className="hidden md:block">
@@ -248,6 +351,46 @@ const Register = () => {
                 {loading ? <Loader1 /> : 'Sign Up'}
               </button>
             </form>
+
+            {/* Divider */}
+            <div className="mt-6 mb-6">
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-300"></div>
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-2 bg-white text-gray-500">Or continue with</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Google Sign In Button */}
+            <button
+              type="button"
+              onClick={handleGoogleSignIn}
+              disabled={loading}
+              className="w-full flex justify-center items-center gap-3 py-3 px-4 border border-gray-300 rounded-xl text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#CAEB66] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              <svg className="w-5 h-5" viewBox="0 0 24 24">
+                <path
+                  fill="#4285F4"
+                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                />
+                <path
+                  fill="#34A853"
+                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                />
+                <path
+                  fill="#FBBC05"
+                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                />
+                <path
+                  fill="#EA4335"
+                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                />
+              </svg>
+              {loading ? <Loader1 /> : 'Sign up with Google'}
+            </button>
 
             {/* Sign In Link */}
             <div className="mt-6 text-center">

@@ -11,6 +11,8 @@ import Blog from '../pages/Blog/Blog';
 import AboutUs from '../pages/About Us/AboutUs';
 import Login from '../pages/Login/Login';
 import Register from '../pages/Register/Register';
+import Dashboard from '../pages/Dashboard/Dashboard';
+import ProtectedRoute from '../components/ProtectedRoute/ProtectedRoute';
 
 
 
@@ -56,6 +58,14 @@ export const router = createBrowserRouter([
       {
         path: 'register',
         Component: Register,
+      },
+      {
+        path: 'dashboard',
+        element: (
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        ),
       },
     ]
   },

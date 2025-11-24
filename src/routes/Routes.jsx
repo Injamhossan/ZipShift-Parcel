@@ -1,5 +1,5 @@
 import React from 'react';
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import Root from '../Root/Root';
 import Home from '../pages/Home/Home';
 import ErrorPage from '../pages/Error/ErrorPage';
@@ -13,6 +13,13 @@ import Login from '../pages/Login/Login';
 import Register from '../pages/Register/Register';
 import Dashboard from '../pages/Dashboard/Dashboard';
 import ProtectedRoute from '../components/ProtectedRoute/ProtectedRoute';
+import DashboardOverview from '../pages/Dashboard/sections/DashboardOverview';
+import ParcelList from '../pages/Dashboard/sections/ParcelList';
+import CreateParcel from '../pages/Dashboard/sections/CreateParcel';
+import TrackingCenter from '../pages/Dashboard/sections/TrackingCenter';
+import BillingCenter from '../pages/Dashboard/sections/BillingCenter';
+import SupportCenter from '../pages/Dashboard/sections/SupportCenter';
+import ProfileSettings from '../pages/Dashboard/sections/ProfileSettings';
 
 
 
@@ -66,6 +73,40 @@ export const router = createBrowserRouter([
             <Dashboard />
           </ProtectedRoute>
         ),
+        children: [
+          {
+            index: true,
+            element: <Navigate to="overview" replace />
+          },
+          {
+            path: 'overview',
+            element: <DashboardOverview />
+          },
+          {
+            path: 'parcels',
+            element: <ParcelList />
+          },
+          {
+            path: 'create-parcel',
+            element: <CreateParcel />
+          },
+          {
+            path: 'tracking',
+            element: <TrackingCenter />
+          },
+          {
+            path: 'billing',
+            element: <BillingCenter />
+          },
+          {
+            path: 'support',
+            element: <SupportCenter />
+          },
+          {
+            path: 'profile',
+            element: <ProfileSettings />
+          },
+        ]
       },
     ]
   },

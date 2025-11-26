@@ -1,28 +1,5 @@
 import React from "react";
-
-const mockParcels = [
-  {
-    id: "ZX-12098",
-    customer: "Rafiq Ahmed",
-    address: "Road 12, Banani",
-    status: "On the way",
-    amount: "৳320",
-  },
-  {
-    id: "ZX-12077",
-    customer: "Nusrat Jahan",
-    address: "Sholakia, Kishoreganj",
-    status: "Picked",
-    amount: "৳450",
-  },
-  {
-    id: "ZX-12055",
-    customer: "Arif Hossain",
-    address: "Khilgaon, Dhaka",
-    status: "Delivered",
-    amount: "৳280",
-  },
-];
+import useDashboardStore from "../../../store/dashboardStore";
 
 const statusColor = {
   "On the way": "badge-info",
@@ -31,6 +8,9 @@ const statusColor = {
 };
 
 const ParcelList = () => {
+  const { parcels } = useDashboardStore();
+  const totalParcels = parcels.length;
+
   return (
     <div className="space-y-6">
       <header>
@@ -46,7 +26,9 @@ const ParcelList = () => {
             <p className="text-sm uppercase tracking-wide text-black">
               Summary
             </p>
-            <h2 className="text-2xl font-semibold text-black">23 Parcels</h2>
+            <h2 className="text-2xl font-semibold text-black">
+              {totalParcels} Parcels
+            </h2>
           </div>
           <button className="btn bg-[#CAEB66] border-none text-black">
             Export CSV
@@ -65,13 +47,13 @@ const ParcelList = () => {
               </tr>
             </thead>
             <tbody>
-              {mockParcels.map((parcel) => (
+              {parcels.map((parcel) => (
                 <tr key={parcel.id}>
                   <td className="font-semibold text-black">{parcel.id}</td>
                   <td>
                     <div>
                       <p className="font-medium text-black">
-                        {parcel.customer}
+                        {parcel.customerName || parcel.customer}
                       </p>
                       <p className="text-sm text-black">+8801***</p>
                     </div>
@@ -82,7 +64,9 @@ const ParcelList = () => {
                       {parcel.status}
                     </span>
                   </td>
-                  <td className="font-semibold text-black">{parcel.amount}</td>
+                  <td className="font-semibold text-black">
+                    {parcel.amount || `৳${parcel.cod}`}
+                  </td>
                 </tr>
               ))}
             </tbody>

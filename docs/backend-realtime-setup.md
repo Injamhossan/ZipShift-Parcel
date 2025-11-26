@@ -11,13 +11,57 @@ Use this guide to plug the dashboard UI into your backend so every card, table, 
 
 ---
 
-### 2. Environment Variables (frontend)
-Create a `.env` (never commit) with:
+### 2. Backend Environment Variables
+Create an `.env` inside your backend project:
 ```
-VITE_API_BASE_URL=https://api.zipshift.com
-VITE_SOCKET_URL=https://realtime.zipshift.com
+PORT=5000
+MONGO_URI=mongodb://localhost:27017/zipshift
+FIREBASE_PROJECT_ID=xxx
+FIREBASE_CLIENT_EMAIL=xxx@xxx.iam.gserviceaccount.com
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+JWT_SECRET=supersecretfallback
+ALLOWED_ORIGIN=http://localhost:5173
 ```
-`src/utils/authApi.js` already centralises fetch helpers—just ensure it reads these vars when building request URLs.
+Frontend `.env.local` should contain:
+```
+VITE_API_BASE_URL=http://localhost:5000
+VITE_SOCKET_URL=http://localhost:5000
+```
+`src/utils/authApi.js` already centralises fetch helpers—just ensure it reads these vars when building request URLs. The SOCKET url feeds `src/utils/socket.js`.
+
+---
+
+### 3. Directory Structure
+```
+zipshift-api/
+ ├─ src/
+ │   ├─ config/
+ │   │   ├─ firebase.js        # Admin SDK init (verify tokens)
+ │   │   └─ db.js              # Mongo connection
+ │   ├─ middleware/
+ │   │   ├─ authMiddleware.js  # Verifies Firebase JWT or fallback JWT
+ │   │   └─ errorHandler.js
+ │   ├─ models/
+ │   │   ├─ User.js
+ │   │   ├─ Parcel.js
+ │   │   ├─ BillingSnapshot.js
+ │   │   └─ SupportTicket.js
+ │   ├─ routes/
+ │   │   ├─ authRoutes.js
+ │   │   ├─ dashboardRoutes.js
+ │   │   ├─ parcelRoutes.js
+ │   │   ├─ billingRoutes.js
+ │   │   └─ supportRoutes.js
+ │   ├─ services/
+ │   │   ├─ dashboardService.js
+ │   │   ├─ parcelService.js
+ │   │   └─ billingService.js
+ │   ├─ sockets/
+ │   │   └─ registerParcelHandlers.js
+ │   └─ server.js
+ ├─ package.json
+ └─ .env
+```
 
 ---
 

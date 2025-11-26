@@ -17,9 +17,14 @@ const Register = () => {
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      role: 'merchant',
+    },
+  });
 
   const password = watch('password');
+  const selectedRole = watch('role') || 'merchant';
 
   const onSubmit = async (data) => {
     setLoading(true);
@@ -48,6 +53,7 @@ const Register = () => {
               phone: data.phone,
               uid: response.user.uid, // Firebase UID
               password: data.password, // Send password for backend to hash
+              role: data.role || 'merchant',
             });
             
             console.log('User saved to backend database:', backendResponse);
@@ -73,6 +79,7 @@ const Register = () => {
             email: data.email,
             phone: data.phone,
             password: data.password,
+            role: data.role || 'merchant',
           });
           
           console.log('Backend registration response:', response);
@@ -114,6 +121,7 @@ const Register = () => {
             email: response.user.email,
             phone: response.user.phoneNumber || '',
             uid: response.user.uid, // Firebase UID
+            role: selectedRole,
             // No password for Google sign-in
           });
           
@@ -253,6 +261,33 @@ const Register = () => {
                 {errors.phone && (
                   <p className="mt-1 text-sm text-red-600">
                     {errors.phone.message}
+                  </p>
+                )}
+              </div>
+
+              {/* Account Type */}
+              <div>
+                <label
+                  htmlFor="role"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Account Type
+                </label>
+                <select
+                  id="role"
+                  {...register('role', {
+                    required: 'Please select an account type',
+                  })}
+                  className={`w-full px-4 py-3 border rounded-xl text-black focus:outline-none focus:ring-2 focus:ring-[#CAEB66] ${
+                    errors.role ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                >
+                  <option value="merchant">Merchant (send parcels)</option>
+                  <option value="rider">Rider (deliver parcels)</option>
+                </select>
+                {errors.role && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.role.message}
                   </p>
                 )}
               </div>

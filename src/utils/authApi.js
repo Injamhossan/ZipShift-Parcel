@@ -1,29 +1,24 @@
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
+import useAuthStore from '../store/authStore';
 
 // Update this with your backend API URL
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_BASE_URL ? `${import.meta.env.VITE_API_BASE_URL}/api` : 'http://localhost:5000/api';
 
 const api = axios.create({
   baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: false
 });
 
 // Add token to requests if available
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('auth-storage');
+    const token = useAuthStore.getState().token;
     if (token) {
-      try {
-        const parsed = JSON.parse(token);
-        if (parsed.state?.token) {
-          config.headers.Authorization = `Bearer ${parsed.state.token}`;
-        }
-      } catch (error) {
-        console.error('Error parsing token:', error);
-      }
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
@@ -38,7 +33,7 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       // Token expired or invalid
-      localStorage.removeItem('auth-storage');
+      useAuthStore.getState().logout();
       window.location.href = '/login';
     }
     return Promise.reject(error);
@@ -129,9 +124,9 @@ export const parcelApi = {
   },
 
   // Get all parcels
-  getAllParcels: async () => {
+  getAllParcels: async (params = {}) => {
     try {
-      const response = await api.get('/parcels');
+      const response = await api.get('/parcels', { params });
       return response.data;
     } catch (error) {
       console.error('Get parcels error:', error);
@@ -199,4 +194,5 @@ export const parcelApi = {
 };
 
 export default api;
+
 

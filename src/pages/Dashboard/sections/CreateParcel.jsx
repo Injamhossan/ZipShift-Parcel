@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { toast } from "react-hot-toast";
+import { parcelApi } from "../../../utils/authApi";
+import useDashboardStore from "../../../store/dashboardStore";
 
 const CreateParcel = () => {
   const [parcel, setParcel] = useState({
@@ -9,16 +11,18 @@ const CreateParcel = () => {
     weight: "",
     cod: "",
     note: "",
+    pickupOption: "rider",
   });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { prependParcel } = useDashboardStore();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setParcel((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    toast.success("Parcel request submitted. Rider will be assigned soon.");
+  const resetForm = () => {
     setParcel({
       customerName: "",
       customerPhone: "",
@@ -26,7 +30,34 @@ const CreateParcel = () => {
       weight: "",
       cod: "",
       note: "",
+      pickupOption: "rider",
     });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      const payload = {
+        ...parcel,
+        weight: parseFloat(parcel.weight),
+        cod: Number(parcel.cod),
+      };
+      const response = await parcelApi.createParcel(payload);
+      const createdParcel = response?.data || response;
+      if (createdParcel) {
+        prependParcel(createdParcel);
+      }
+      toast.success("Parcel request submitted. Rider will be assigned soon.");
+      resetForm();
+    } catch (error) {
+      console.error("Parcel create failed", error);
+      toast.error(
+        error?.response?.data?.message || "Failed to create parcel request"
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -94,6 +125,59 @@ const CreateParcel = () => {
             rows={3}
             required
           ></textarea>
+        </div>
+
+        <div className="space-y-3 border border-dashed border-gray-200 rounded-2xl p-4 bg-gray-50/60">
+          <p className="text-sm uppercase tracking-wide text-black">
+            Pickup preference
+          </p>
+          <div className="flex flex-wrap gap-3">
+            {[
+              {
+                value: "rider",
+                title: "ZipShift rider",
+                description: "Our rider picks up from your address",
+                icon: "fa-motorcycle",
+              },
+              {
+                value: "merchant",
+                title: "Drop to hub",
+                description: "You will deliver parcels to the nearest hub",
+                icon: "fa-store",
+              },
+            ].map((option) => {
+              const isActive = parcel.pickupOption === option.value;
+              return (
+                <button
+                  type="button"
+                  key={option.value}
+                  onClick={() =>
+                    setParcel((prev) => ({
+                      ...prev,
+                      pickupOption: option.value,
+                    }))
+                  }
+                  className={`flex-1 min-w-[240px] border rounded-2xl p-4 text-left transition ${
+                    isActive
+                      ? "border-[#CAEB66] bg-white shadow"
+                      : "border-gray-200 bg-white/70 hover:border-[#CAEB66]"
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                      <i className={`fa-solid ${option.icon}`}></i>
+                    </span>
+                    <div>
+                      <p className="font-semibold text-black">{option.title}</p>
+                      <p className="text-sm text-black/70">
+                        {option.description}
+                      </p>
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -164,6 +248,7 @@ const CreateParcel = () => {
           <button
             type="submit"
             className="btn bg-[#CAEB66] border-none text-black px-10"
+            disabled={isSubmitting}
           >
             Submit parcel
           </button>

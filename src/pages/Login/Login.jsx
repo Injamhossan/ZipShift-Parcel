@@ -105,7 +105,7 @@ const Login = () => {
                       message: 'Invalid email address',
                     },
                   })}
-                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#CAEB66] ${
+                  className={`w-full px-4 py-3 border rounded-xl text-black focus:outline-none focus:ring-2 focus:ring-[#CAEB66] ${
                     errors.email ? 'border-red-500' : 'border-gray-300'
                   }`}
                   placeholder="Enter your email"
@@ -136,7 +136,7 @@ const Login = () => {
                       message: 'Password must be at least 6 characters',
                     },
                   })}
-                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#CAEB66] ${
+                  className={`w-full px-4 py-3 border rounded-xl text-black focus:outline-none focus:ring-2 focus:ring-[#CAEB66] ${
                     errors.password ? 'border-red-500' : 'border-gray-300'
                   }`}
                   placeholder="Enter your password"

@@ -1,12 +1,9 @@
 import React from "react";
-
-const payouts = [
-  { id: "INV-00123", date: "24 Nov 2025", amount: "৳18,500", status: "Paid" },
-  { id: "INV-00118", date: "17 Nov 2025", amount: "৳12,960", status: "Paid" },
-  { id: "INV-00112", date: "10 Nov 2025", amount: "৳9,420", status: "Processing" },
-];
+import useDashboardStore from "../../../store/dashboardStore";
 
 const BillingCenter = () => {
+  const { billing } = useDashboardStore();
+
   return (
     <div className="space-y-6">
       <header className="flex flex-wrap items-end justify-between gap-4">
@@ -25,9 +22,21 @@ const BillingCenter = () => {
 
       <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {[
-          { label: "Wallet balance", value: "৳6,200", detail: "Ready to withdraw" },
-          { label: "Pending COD", value: "৳21,430", detail: "Collected by riders" },
-          { label: "Last payout", value: "৳18,500", detail: "24 Nov 2025" },
+          {
+            label: "Wallet balance",
+            value: billing?.walletBalance ?? "৳0",
+            detail: "Ready to withdraw",
+          },
+          {
+            label: "Pending COD",
+            value: billing?.pendingCod ?? "৳0",
+            detail: "Collected by riders",
+          },
+          {
+            label: "Last payout",
+            value: billing?.lastPayout?.amount ?? "৳0",
+            detail: billing?.lastPayout?.date ?? "--",
+          },
         ].map((card) => (
           <article
             key={card.label}
@@ -57,7 +66,7 @@ const BillingCenter = () => {
               </tr>
             </thead>
             <tbody>
-              {payouts.map((item) => (
+              {(billing?.payouts || []).map((item) => (
                 <tr key={item.id}>
                   <td className="font-semibold text-black">{item.id}</td>
                   <td className="text-black">{item.date}</td>

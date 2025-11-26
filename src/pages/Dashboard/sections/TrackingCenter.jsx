@@ -1,13 +1,9 @@
 import React from "react";
+import useDashboardStore from "../../../store/dashboardStore";
 
 const TrackingCenter = () => {
-  const timeline = [
-    { label: "Parcel created", time: "10:20 AM", done: true },
-    { label: "Picked from merchant", time: "12:00 PM", done: true },
-    { label: "At Dhaka hub", time: "03:45 PM", done: true },
-    { label: "Out for delivery", time: "08:15 AM", done: false },
-    { label: "Delivered", time: "--", done: false },
-  ];
+  const { tracking } = useDashboardStore();
+  const timeline = tracking?.timeline || [];
 
   return (
     <div className="space-y-6">
@@ -34,9 +30,9 @@ const TrackingCenter = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[
-            { label: "Current hub", value: "Dhaka Central" },
-            { label: "Estimated delivery", value: "Today, 4:30 PM" },
-            { label: "Rider contact", value: "+880 1788-000000" },
+            { label: "Current hub", value: tracking?.currentHub || "--" },
+            { label: "Estimated delivery", value: tracking?.eta || "--" },
+            { label: "Rider contact", value: tracking?.riderContact || "--" },
           ].map((info) => (
             <article
               key={info.label}

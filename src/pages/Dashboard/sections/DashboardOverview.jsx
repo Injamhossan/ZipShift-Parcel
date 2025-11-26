@@ -1,9 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import useAuthStore from "../../../store/authStore";
+import useDashboardStore from "../../../store/dashboardStore";
 
 const DashboardOverview = () => {
   const { user } = useAuthStore();
+  const { summary } = useDashboardStore();
 
   return (
     <div className="space-y-8">
@@ -66,19 +68,19 @@ const DashboardOverview = () => {
         {[
           {
             title: "Total Shipments",
-            value: "128",
+            value: summary?.totalShipments ?? "--",
             info: "All time",
             icon: "fa-box",
           },
           {
             title: "Pending Pickups",
-            value: "12",
+            value: summary?.pendingPickups ?? "--",
             info: "Awaiting courier",
             icon: "fa-clock",
           },
           {
             title: "Delivered",
-            value: "98",
+            value: summary?.deliveredLast30Days ?? "--",
             info: "Last 30 days",
             icon: "fa-check-circle",
           },

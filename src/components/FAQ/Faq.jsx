@@ -37,7 +37,7 @@ const Faq = () => {
   const [activeId, setActiveId] = useState(null);
 
   return (
-    <section className="py-16">
+    <section className="py-14">
       <div className="mx-auto max-w-[1100px] px-4 sm:px-6 text-center">
         <h2 className="text-3xl font-extrabold text-[#0c3e39]">
           Frequently Asked Question (FAQ)

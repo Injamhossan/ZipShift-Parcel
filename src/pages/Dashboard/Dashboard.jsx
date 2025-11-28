@@ -37,14 +37,24 @@ const Dashboard = () => {
           <aside className="w-full lg:w-72 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 h-max">
             <div className="flex items-center gap-4 pb-6 border-b border-gray-100">
               <div className="avatar placeholder">
-                <div className="bg-[#CAEB66] text-black rounded-full w-14">
-                  <span className="text-xl font-bold">
-                    {user?.displayName?.charAt(0)?.toUpperCase() ||
-                      user?.name?.charAt(0)?.toUpperCase() ||
-                      user?.email?.charAt(0)?.toUpperCase() ||
-                      "U"}
-                  </span>
-                </div>
+                {user?.photoURL || user?.photo || user?.avatar || user?.image ? (
+                  <div className="bg-[#CAEB66] text-black rounded-full w-14 h-14">
+                    <img
+                      src={user?.photoURL || user?.photo || user?.avatar || user?.image}
+                      alt={user?.displayName || user?.name || "User"}
+                      className="w-full h-full rounded-full object-cover"
+                    />
+                  </div>
+                ) : (
+                  <div className="bg-[#CAEB66] text-black rounded-full w-14 h-14 flex items-center justify-center">
+                    <span className="text-xl font-bold">
+                      {user?.displayName?.charAt(0)?.toUpperCase() ||
+                        user?.name?.charAt(0)?.toUpperCase() ||
+                        user?.email?.charAt(0)?.toUpperCase() ||
+                        "U"}
+                    </span>
+                  </div>
+                )}
               </div>
               <div>
                 <p className="text-sm text-black">Merchant</p>

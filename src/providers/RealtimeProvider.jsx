@@ -1,7 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { toast } from "react-hot-toast";
 import useAuthStore from "../store/authStore";
 import useDashboardStore from "../store/dashboardStore";
+import useParcelStore from "../store/parcelStore";
+import useBillingStore from "../store/billingStore";
+import useSupportStore from "../store/supportStore";
 import {
   getBillingSnapshot,
   getDashboardSummary,
@@ -13,6 +16,12 @@ const RealtimeProvider = ({ children }) => {
   const { token, isAuthenticated } = useAuthStore();
   const { setSummary, setParcels, prependParcel, mergeParcel, setBillingSnapshot } =
     useDashboardStore();
+  const { prepend, merge } = useParcelStore();
+  const { setSnapshot } = useBillingStore();
+  const { updateTicket } = useSupportStore();
+  
+  // Ref to track if we've already shown a connection error recently
+
 
   useEffect(() => {
     if (!isAuthenticated || !token) {
@@ -40,7 +49,8 @@ const RealtimeProvider = ({ children }) => {
         if (billing) setBillingSnapshot(billing);
       } catch (error) {
         console.error("Initial data bootstrap failed", error);
-        toast.error("Failed to load live dashboard data");
+        // Suppress initial bootstrap error to avoid spam on login
+        // toast.error("Failed to load live dashboard data");
       }
     };
 
@@ -53,34 +63,42 @@ const RealtimeProvider = ({ children }) => {
       socket.off("parcels:created");
       socket.off("parcels:updated");
       socket.off("billing:payout");
+      socket.off("support:ticket-status");
+      socket.off("connect_error");
     };
 
-    socket.on("connect_error", (err) => {
-      console.error("Socket error", err);
-      toast.error("Realtime connection failed");
-    });
+    // socket.on("connect_error", (err) => {
+    //   console.error("Socket error", err);
+    // });
 
     socket.on("dashboard:summary", (payload) => {
       setSummary(payload);
     });
 
     socket.on("parcels:created", (parcel) => {
-      prependParcel(parcel);
+      prependParcel(parcel); // Dashboard store
+      prepend(parcel);       // Parcel store
     });
 
     socket.on("parcels:updated", (parcel) => {
-      mergeParcel(parcel);
+      mergeParcel(parcel);   // Dashboard store
+      merge(parcel);         // Parcel store
     });
 
     socket.on("billing:payout", (snapshot) => {
-      setBillingSnapshot(snapshot);
+      setBillingSnapshot(snapshot); // Dashboard store
+      setSnapshot(snapshot);        // Billing store
+    });
+    
+    socket.on("support:ticket-status", (ticket) => {
+      updateTicket(ticket);
     });
 
     return () => {
       cleanupHandlers();
       disconnectSocket();
     };
-  }, [isAuthenticated, token, setSummary, setParcels, prependParcel, mergeParcel, setBillingSnapshot]);
+  }, [isAuthenticated, token, setSummary, setParcels, prependParcel, mergeParcel, setBillingSnapshot, prepend, merge, setSnapshot, updateTicket]);
 
   return children;
 };

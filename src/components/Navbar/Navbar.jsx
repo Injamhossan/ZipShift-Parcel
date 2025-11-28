@@ -90,10 +90,10 @@ const Navbar = () => {
                   className="flex items-center gap-2 cursor-pointer"
                 >
                   <div className="avatar placeholder">
-                    {user?.photoURL ? (
+                    {user?.photoURL || user?.photo || user?.avatar || user?.image ? (
                       <div className="bg-[#CAEB66] text-black rounded-full w-10 h-10">
                         <img
-                          src={user.photoURL}
+                          src={user?.photoURL || user?.photo || user?.avatar || user?.image}
                           alt={user.displayName || user.name || "User"}
                           className="w-full h-full rounded-full object-cover"
                         />

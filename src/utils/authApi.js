@@ -62,8 +62,10 @@ export const authApi = {
         message: error.message,
       });
       
-      const message = error.response?.data?.message || error.response?.data?.error || 'Registration failed';
-      toast.error(message);
+      if (error.response?.status !== 401) {
+        const message = error.response?.data?.message || error.response?.data?.error || 'Registration failed';
+        toast.error(message);
+      }
       throw error;
     }
   },
@@ -74,8 +76,10 @@ export const authApi = {
       const response = await api.post('/auth/login', credentials);
       return response.data;
     } catch (error) {
-      const message = error.response?.data?.message || 'Login failed';
-      toast.error(message);
+      if (error.response?.status !== 401) {
+        const message = error.response?.data?.message || 'Login failed';
+        toast.error(message);
+      }
       throw error;
     }
   },
@@ -92,8 +96,10 @@ export const authApi = {
       const response = await api.put('/auth/profile', userData);
       return response.data;
     } catch (error) {
-      const message = error.response?.data?.message || 'Update failed';
-      toast.error(message);
+      if (error.response?.status !== 401) {
+        const message = error.response?.data?.message || 'Update failed';
+        toast.error(message);
+      }
       throw error;
     }
   },
@@ -151,8 +157,10 @@ export const parcelApi = {
       const response = await api.post('/parcels', parcelData);
       return response.data;
     } catch (error) {
-      const message = error.response?.data?.message || 'Failed to create parcel';
-      toast.error(message);
+      if (error.response?.status !== 401) {
+        const message = error.response?.data?.message || 'Failed to create parcel';
+        toast.error(message);
+      }
       throw error;
     }
   },
@@ -174,8 +182,10 @@ export const parcelApi = {
       const response = await api.put(`/parcels/${parcelId}`, parcelData);
       return response.data;
     } catch (error) {
-      const message = error.response?.data?.message || 'Failed to update parcel';
-      toast.error(message);
+      if (error.response?.status !== 401) {
+        const message = error.response?.data?.message || 'Failed to update parcel';
+        toast.error(message);
+      }
       throw error;
     }
   },
@@ -186,8 +196,10 @@ export const parcelApi = {
       const response = await api.delete(`/parcels/${parcelId}`);
       return response.data;
     } catch (error) {
-      const message = error.response?.data?.message || 'Failed to delete parcel';
-      toast.error(message);
+      if (error.response?.status !== 401) {
+        const message = error.response?.data?.message || 'Failed to delete parcel';
+        toast.error(message);
+      }
       throw error;
     }
   },

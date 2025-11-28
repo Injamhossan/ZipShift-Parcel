@@ -122,6 +122,7 @@ const Register = () => {
             phone: response.user.phoneNumber || '',
             uid: response.user.uid, // Firebase UID
             role: selectedRole,
+            photoURL: response.user.photoURL,
             // No password for Google sign-in
           });
           

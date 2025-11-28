@@ -24,12 +24,12 @@ const Navbar = () => {
 
   const links = (
     <>
-      <NavLink to={"/services"}>Services</NavLink>
-      <NavLink to={"/coverage"}>Coverage</NavLink>
-      <NavLink to={"/aboutus"}>About Us</NavLink>
-      <NavLink to={"/pricing"}>Pricing</NavLink>
-      <NavLink to={"/blog"}>Blog</NavLink>
-      <NavLink to={"/contactus"}>Contact Us</NavLink>
+      <NavLink to={"services"}>Services</NavLink>
+      <NavLink to={"coverage"}>Coverage</NavLink>
+      <NavLink to={"aboutus"}>About Us</NavLink>
+      <NavLink to={"pricing"}>Pricing</NavLink>
+      <NavLink to={"blog"}>Blog</NavLink>
+      <NavLink to={"contactus"}>Contact Us</NavLink>
     </>
   );
 

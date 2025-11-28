@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { toast } from "react-hot-toast";
-import { parcelApi } from "../../../utils/authApi";
+import { parcelApi, paymentApi } from "../../../utils/authApi";
 import useDashboardStore from "../../../store/dashboardStore";
+import PaymentModal from "../../../components/Payment/PaymentModal";
 
 const CreateParcel = () => {
   const [parcel, setParcel] = useState({
@@ -15,6 +16,13 @@ const CreateParcel = () => {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [paymentModal, setPaymentModal] = useState({
+    isOpen: false,
+    clientSecret: "",
+    parcelId: "",
+    amount: 0
+  });
+
   const { prependParcel } = useDashboardStore();
 
   const handleChange = (e) => {
@@ -45,11 +53,28 @@ const CreateParcel = () => {
       };
       const response = await parcelApi.createParcel(payload);
       const createdParcel = response?.data || response;
+      
       if (createdParcel) {
+        // Calculate delivery fee (Mock calculation: 60 base + 20 per kg)
+        const deliveryFee = 60 + (parseFloat(parcel.weight) * 20);
+        
+        // Create payment intent
+        const intentResponse = await paymentApi.createIntent({
+          amount: deliveryFee,
+          parcelId: createdParcel._id || createdParcel.id
+        });
+
+        setPaymentModal({
+          isOpen: true,
+          clientSecret: intentResponse.clientSecret,
+          parcelId: createdParcel._id || createdParcel.id,
+          amount: deliveryFee
+        });
+
         prependParcel(createdParcel);
+        toast.success("Parcel created! Please complete payment.");
+        resetForm();
       }
-      toast.success("Parcel request submitted. Rider will be assigned soon.");
-      resetForm();
     } catch (error) {
       console.error("Parcel create failed", error);
       toast.error(
@@ -57,6 +82,23 @@ const CreateParcel = () => {
       );
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handlePaymentSuccess = async (paymentIntent) => {
+    try {
+      await paymentApi.confirmPayment({
+        paymentIntentId: paymentIntent.id,
+        parcelId: paymentModal.parcelId
+      });
+      
+      toast.success("Payment successful! Parcel status updated.");
+      setPaymentModal(prev => ({ ...prev, isOpen: false }));
+      
+      // Optionally refresh parcels list here if needed
+    } catch (error) {
+      console.error("Payment confirmation failed", error);
+      toast.error("Payment confirmed but failed to update parcel status");
     }
   };
 
@@ -254,6 +296,14 @@ const CreateParcel = () => {
           </button>
         </div>
       </form>
+
+      <PaymentModal 
+        isOpen={paymentModal.isOpen}
+        clientSecret={paymentModal.clientSecret}
+        amount={paymentModal.amount}
+        onClose={() => setPaymentModal(prev => ({ ...prev, isOpen: false }))}
+        onSuccess={handlePaymentSuccess}
+      />
     </div>
   );
 };

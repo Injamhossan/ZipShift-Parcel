@@ -90,10 +90,10 @@ const ManageParcel = () => {
             {filteredParcels.length > 0 ? (
                 filteredParcels.map((parcel) => (
                 <tr key={parcel.id}>
-                    <td className="font-mono text-xs font-bold">{parcel.trackingId}</td>
-                    <td className="text-xs">{new Date(parcel.createdAt).toLocaleDateString()}</td>
+                    <td className="font-mono text-xs font-bold text-black">{parcel.trackingId}</td>
+                    <td className="text-xs text-black">{new Date(parcel.createdAt).toLocaleDateString()}</td>
                     <td>
-                        <div className="font-bold">{parcel.receiverInfo.name}</div>
+                        <div className="font-bold text-black">{parcel.receiverInfo.name}</div>
                         <div className="text-xs text-gray-500">{parcel.receiverInfo.contact}</div>
                     </td>
                     <td>
@@ -101,9 +101,9 @@ const ManageParcel = () => {
                             {parcel.status}
                         </div>
                     </td>
-                    <td className="font-bold">৳{parcel.cost}</td>
+                    <td className="font-bold text-black">৳{parcel.cost}</td>
                     <td>
-                        <Link to={`/dashboard/tracking?id=${parcel.trackingId}`} className="btn btn-xs btn-ghost">Track</Link>
+                        <Link to={`/dashboard/tracking?id=${parcel.trackingId}`} className="btn btn-xs btn-ghost bg-[#CAEB66] border-none text-black">Track</Link>
                     </td>
                 </tr>
                 ))

@@ -40,49 +40,49 @@ const Settings = () => {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-2xl font-bold">Settings</h1>
+        <h1 className="text-2xl font-bold text-black">Settings</h1>
         <p className="text-gray-500">Manage your profile information.</p>
       </header>
 
       <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 max-w-2xl">
-        <h3 className="font-bold text-lg mb-4">Profile Details</h3>
+        <h3 className="font-bold text-lg mb-4 text-black">Profile Details</h3>
         <form onSubmit={handleSubmit} className="space-y-4">
             <div className="form-control">
-                <label className="label"><span className="label-text">Name</span></label>
+                <label className="label"><span className="label-text text-black">Name</span></label>
                 <input 
                     type="text" 
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    className="input input-bordered"
+                    className="input input-bordered text-black bg-white border border-gray-300"
                 />
             </div>
             <div className="form-control">
-                <label className="label"><span className="label-text">Email</span></label>
+                <label className="label"><span className="label-text text-black">Email</span></label>
                 <input 
                     type="email" 
                     value={user?.email}
-                    className="input input-bordered"
+                    className="input input-bordered text-black bg-white border border-gray-300"
                     disabled
                 />
             </div>
             <div className="form-control">
-                <label className="label"><span className="label-text">Phone</span></label>
+                <label className="label"><span className="label-text text-black">Phone</span></label>
                 <input 
                     type="text" 
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    className="input input-bordered"
+                    className="input input-bordered text-black bg-white border border-gray-300"
                 />
             </div>
             <div className="form-control">
-                <label className="label"><span className="label-text">Address</span></label>
+                <label className="label"><span className="label-text text-black">Address</span></label>
                 <textarea 
                     name="address"
                     value={formData.address}
                     onChange={handleChange}
-                    className="textarea textarea-bordered"
+                    className="textarea textarea-bordered text-black bg-white border border-gray-300"
                 ></textarea>
             </div>
             <div className="pt-4">

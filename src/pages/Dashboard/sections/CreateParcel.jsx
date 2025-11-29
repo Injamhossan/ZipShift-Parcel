@@ -83,7 +83,7 @@ const CreateParcel = () => {
       
       if (response.success) {
         toast.success(`Parcel created! Cost: ৳${cost}`);
-        navigate('/dashboard/parcel-to-pay');
+        navigate(`/dashboard/pay/${response.data.id}`);
       }
     } catch (error) {
       console.error("Parcel create failed", error);
@@ -145,8 +145,7 @@ const CreateParcel = () => {
                         className="input input-bordered text-black bg-white border border-gray-300"
                         value={formData.senderInfo.name}
                         onChange={(e) => handleChange('senderInfo', 'name', e.target.value)}
-                        required
-                        readOnly // Prefilled
+                        required// Prefilled
                     />
                 </div>
                 <div className="form-control">

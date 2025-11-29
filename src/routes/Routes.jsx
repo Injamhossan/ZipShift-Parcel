@@ -18,6 +18,7 @@ import ProtectedRoute from '../components/ProtectedRoute/ProtectedRoute';
 import UserHome from '../pages/Dashboard/User/UserHome';
 import CreateParcel from '../pages/Dashboard/sections/CreateParcel';
 import ParcelToPay from '../pages/Dashboard/User/ParcelToPay';
+import PayParcel from '../pages/Dashboard/User/PayParcel';
 import ManageParcel from '../pages/Dashboard/User/ManageParcel';
 import PaymentHistory from '../pages/Dashboard/User/PaymentHistory';
 
@@ -62,36 +63,38 @@ const router = createBrowserRouter([
             { path: 'blog', element: <Blog /> },
             { path: 'login', element: <Login /> },
             { path: 'register', element: <Register /> },
-        ],
-    },
-    // Protected Dashboard Route
-    {
-        path: 'dashboard',
-        element: <ProtectedRoute allowedRoles={['user', 'admin', 'rider']}><Dashboard /></ProtectedRoute>, 
-        children: [
-            // Smart Redirect based on role
-            { index: true, element: <DashboardRedirect /> }, 
-            
-            // User Routes
-            { path: 'user-overview', element: <ProtectedRoute allowedRoles={['user']}><UserHome /></ProtectedRoute> },
-            { path: 'create-parcel', element: <ProtectedRoute allowedRoles={['user']}><CreateParcel /></ProtectedRoute> },
-            { path: 'parcel-to-pay', element: <ProtectedRoute allowedRoles={['user']}><ParcelToPay /></ProtectedRoute> },
-            { path: 'manage-parcel', element: <ProtectedRoute allowedRoles={['user']}><ManageParcel /></ProtectedRoute> },
-            { path: 'payment-history', element: <ProtectedRoute allowedRoles={['user']}><PaymentHistory /></ProtectedRoute> },
-            
-            // Admin Routes
-            { path: 'admin-overview', element: <ProtectedRoute allowedRoles={['admin']}><AdminHome /></ProtectedRoute> },
-            { path: 'manage-users', element: <ProtectedRoute allowedRoles={['admin']}><ManageUsers /></ProtectedRoute> },
-            { path: 'manage-riders', element: <ProtectedRoute allowedRoles={['admin']}><ManageRiders /></ProtectedRoute> },
-            { path: 'delivery-management', element: <ProtectedRoute allowedRoles={['admin']}><DeliveryManagement /></ProtectedRoute> },
 
-            // Rider Routes
-            { path: 'rider-overview', element: <ProtectedRoute allowedRoles={['rider']}><RiderHome /></ProtectedRoute> },
-            { path: 'parcel-to-pickup', element: <ProtectedRoute allowedRoles={['rider']}><ParcelToPickup /></ProtectedRoute> },
-            { path: 'parcel-to-delivery', element: <ProtectedRoute allowedRoles={['rider']}><ParcelToDelivery /></ProtectedRoute> },
+            // Protected Dashboard Route
+            {
+                path: 'dashboard',
+                element: <ProtectedRoute allowedRoles={['user', 'admin', 'rider']}><Dashboard /></ProtectedRoute>, 
+                children: [
+                    // Smart Redirect based on role
+                    { index: true, element: <DashboardRedirect /> }, 
+                    
+                    // User Routes
+                    { path: 'user-overview', element: <ProtectedRoute allowedRoles={['user']}><UserHome /></ProtectedRoute> },
+                    { path: 'create-parcel', element: <ProtectedRoute allowedRoles={['user']}><CreateParcel /></ProtectedRoute> },
+                    { path: 'parcel-to-pay', element: <ProtectedRoute allowedRoles={['user']}><ParcelToPay /></ProtectedRoute> },
+                    { path: 'pay/:id', element: <ProtectedRoute allowedRoles={['user']}><PayParcel /></ProtectedRoute> },
+                    { path: 'manage-parcel', element: <ProtectedRoute allowedRoles={['user']}><ManageParcel /></ProtectedRoute> },
+                    { path: 'payment-history', element: <ProtectedRoute allowedRoles={['user']}><PaymentHistory /></ProtectedRoute> },
+                    
+                    // Admin Routes
+                    { path: 'admin-overview', element: <ProtectedRoute allowedRoles={['admin']}><AdminHome /></ProtectedRoute> },
+                    { path: 'manage-users', element: <ProtectedRoute allowedRoles={['admin']}><ManageUsers /></ProtectedRoute> },
+                    { path: 'manage-riders', element: <ProtectedRoute allowedRoles={['admin']}><ManageRiders /></ProtectedRoute> },
+                    { path: 'delivery-management', element: <ProtectedRoute allowedRoles={['admin']}><DeliveryManagement /></ProtectedRoute> },
 
-            // Shared
-            { path: 'settings', element: <Settings /> },
+                    // Rider Routes
+                    { path: 'rider-overview', element: <ProtectedRoute allowedRoles={['rider']}><RiderHome /></ProtectedRoute> },
+                    { path: 'parcel-to-pickup', element: <ProtectedRoute allowedRoles={['rider']}><ParcelToPickup /></ProtectedRoute> },
+                    { path: 'parcel-to-delivery', element: <ProtectedRoute allowedRoles={['rider']}><ParcelToDelivery /></ProtectedRoute> },
+
+                    // Shared
+                    { path: 'settings', element: <Settings /> },
+                ],
+            },
         ],
     },
     // Fallback

@@ -64,15 +64,15 @@ const ParcelToPay = () => {
             {filteredParcels.length > 0 ? (
                 filteredParcels.map((parcel) => (
                 <tr key={parcel.id}>
-                    <td className="font-mono text-xs">{parcel.trackingId}</td>
+                    <td className="font-mono text-xs text-black">{parcel.trackingId}</td>
                     <td>
-                        <div className="font-bold">{parcel.receiverInfo.name}</div>
+                        <div className="font-bold text-black">{parcel.receiverInfo.name}</div>
                         <div className="text-xs text-gray-500">{parcel.receiverInfo.contact}</div>
                     </td>
-                    <td className="max-w-xs truncate">{parcel.receiverInfo.address}</td>
-                    <td className="font-bold">৳{parcel.cost}</td>
+                    <td className="max-w-xs truncate text-black">{parcel.receiverInfo.address}</td>
+                    <td className="font-bold text-black">৳{parcel.cost}</td>
                     <td className="flex gap-2">
-                        <Link to={`/pay/${parcel.id}`} className="btn btn-sm bg-[#CAEB66] border-none text-black">Pay</Link>
+                        <Link to={`/dashboard/pay/${parcel.id}`} className="btn btn-sm bg-[#CAEB66] border-none text-black">Pay</Link>
                         <button className="btn btn-sm btn-error btn-outline">Delete</button>
                     </td>
                 </tr>

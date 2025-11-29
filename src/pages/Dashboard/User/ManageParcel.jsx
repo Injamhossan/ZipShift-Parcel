@@ -48,12 +48,12 @@ const ManageParcel = () => {
     <div className="space-y-6">
       <header className="flex flex-col md:flex-row justify-between items-center gap-4">
         <div>
-            <h1 className="text-2xl font-bold">Manage Parcels</h1>
-            <p className="text-gray-500">Total Parcels: {parcels.length}</p>
+            <h1 className="text-2xl text-black -font-bold">Manage Parcels</h1>
+            <p className="text-black">Total Parcels: {parcels.length}</p>
         </div>
         <div className="flex gap-4 w-full md:w-auto">
             <select 
-                className="select select-bordered"
+                className="select select-bordered bg-white border border-gray-300 text-black w-full"
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
             >
@@ -67,7 +67,7 @@ const ManageParcel = () => {
             <input 
                 type="text" 
                 placeholder="Search ID or Phone..." 
-                className="input input-bordered w-full" 
+                className="input input-bordered bg-white border border-gray-300 w-full text-black" 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -78,12 +78,12 @@ const ManageParcel = () => {
         <table className="table w-full">
           <thead>
             <tr>
-              <th>Tracking ID</th>
-              <th>Date</th>
-              <th>Receiver</th>
-              <th>Status</th>
-              <th>Cost</th>
-              <th>Actions</th>
+              <th className='text-black'>Tracking ID</th>
+              <th className='text-black'>Date</th>
+              <th className='text-black'>Receiver</th>
+              <th className='text-black'>Status</th>
+              <th className='text-black'>Cost</th>
+              <th className='text-black'>Actions</th>
             </tr>
           </thead>
           <tbody>

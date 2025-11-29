@@ -42,7 +42,7 @@ const DashboardRedirect = () => {
   if (user?.role === 'admin') return <Navigate to="admin-overview" replace />;
   if (user?.role === 'rider') return <Navigate to="rider-overview" replace />;
   if (user?.role === 'user') return <Navigate to="user-overview" replace />;
-  
+
   return <Navigate to="user-overview" replace />;
 };
 

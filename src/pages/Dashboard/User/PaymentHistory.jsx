@@ -33,7 +33,7 @@ const PaymentHistory = () => {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-2xl font-bold">Payment History</h1>
+        <h1 className="text-2xl font-bold text-black">Payment History</h1>
         <p className="text-gray-500">View your past transactions.</p>
       </header>
 
@@ -41,11 +41,11 @@ const PaymentHistory = () => {
         <table className="table w-full">
           <thead>
             <tr>
-              <th>Transaction Date</th>
-              <th>Parcel ID</th>
-              <th>Amount</th>
-              <th>Status</th>
-              <th>Method</th>
+              <th className='text-black'>Transaction Date</th>
+              <th className='text-black'>Parcel ID</th>
+              <th className='text-black'>Amount</th>
+              <th className='text-black'>Status</th>
+              <th className='text-black'>Method</th>
             </tr>
           </thead>
           <tbody>
@@ -63,7 +63,7 @@ const PaymentHistory = () => {
                 ))
             ) : (
                 <tr>
-                    <td colSpan="5" className="text-center py-8 text-gray-400">No payment history found</td>
+                    <td colSpan="5" className="text-center py-8 text-black">No payment history found</td>
                 </tr>
             )}
           </tbody>

@@ -46,15 +46,15 @@ const UserHome = () => {
             </div>
           </div>
           <div>
-            <h2 className="text-xl font-bold">{user?.name}</h2>
+            <h2 className="text-xl text-black font-bold">{user?.name}</h2>
             <p className="text-gray-500">{user?.email}</p>
-            <button className="btn btn-sm btn-outline mt-3">Edit Profile</button>
+            <button className="btn btn-sm btn-outline text-black mt-3 hover:bg-gray-100">Edit Profile</button>
           </div>
         </div>
 
         {/* Stats Chart */}
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 h-80">
-          <h3 className="font-bold mb-4">Parcel Status Distribution</h3>
+          <h3 className="font-bold mb-4 text-black">Parcel Status Distribution</h3>
           {statusData.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -85,7 +85,7 @@ const UserHome = () => {
       {/* Quick Stats Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {['unpaid', 'paid', 'in-transit', 'delivered'].map((status) => (
-          <div key={status} className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+          <div key={status} className="bg-gray-50 p-4 rounded-xl text-black border border-gray-100">
             <p className="text-sm text-gray-500 capitalize">{status.replace('-', ' ')}</p>
             <p className="text-2xl font-bold">{stats?.statusCounts?.[status] || 0}</p>
           </div>

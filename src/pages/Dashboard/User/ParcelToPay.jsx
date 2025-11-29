@@ -35,14 +35,14 @@ const ParcelToPay = () => {
     <div className="space-y-6">
       <header className="flex justify-between items-center">
         <div>
-            <h1 className="text-2xl font-bold">Parcels to Pay</h1>
+            <h1 className="text-2xl font-bold text-black">Parcels to Pay</h1>
             <p className="text-gray-500">Total Found: {parcels.length}</p>
         </div>
         <div className="form-control">
             <input 
                 type="text" 
                 placeholder="Search by phone..." 
-                className="input input-bordered w-full max-w-xs" 
+                className="input input-bordered w-full max-w-xs bg-white text-black border border-gray-500" 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -53,11 +53,11 @@ const ParcelToPay = () => {
         <table className="table w-full">
           <thead>
             <tr>
-              <th>Parcel ID</th>
-              <th>Receiver</th>
-              <th>Address</th>
-              <th>Cost</th>
-              <th>Actions</th>
+              <th className='text-black'>Parcel ID</th>
+              <th className='text-black'>Receiver</th>
+              <th className='text-black'>Address</th>
+              <th className='text-black'>Cost</th>
+              <th className='text-black'>Actions</th>
             </tr>
           </thead>
           <tbody>

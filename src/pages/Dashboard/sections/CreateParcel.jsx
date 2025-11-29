@@ -104,12 +104,12 @@ const CreateParcel = () => {
         
         {/* Parcel Info */}
         <section className="space-y-4">
-            <h3 className="text-lg font-semibold border-b pb-2">Parcel Information</h3>
+            <h3 className="text-lg font-semibold border-b pb-2 text-black">Parcel Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="form-control">
-                    <label className="label"><span className="label-text">Type</span></label>
+                    <label className="label"><span className="label-text text-black">Type</span></label>
                     <select 
-                        className="select select-bordered"
+                        className="select select-bordered text-black bg-white border border-gray-300"
                         value={formData.parcelType}
                         onChange={(e) => handleChange('root', 'parcelType', e.target.value)}
                     >
@@ -119,10 +119,10 @@ const CreateParcel = () => {
                 </div>
                 {formData.parcelType === 'non-document' && (
                     <div className="form-control">
-                        <label className="label"><span className="label-text">Weight (KG)</span></label>
+                        <label className="label"><span className="label-text text-black">Weight (KG)</span></label>
                         <input 
                             type="number" 
-                            className="input input-bordered"
+                            className="input input-bordered text-black bg-white border border-gray-300"
                             value={formData.weight}
                             onChange={(e) => handleChange('root', 'weight', e.target.value)}
                             required
@@ -136,13 +136,13 @@ const CreateParcel = () => {
 
         {/* Sender Info */}
         <section className="space-y-4">
-            <h3 className="text-lg font-semibold border-b pb-2">Sender Information</h3>
+            <h3 className="text-lg font-semibold border-b pb-2 text-black">Sender Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="form-control">
-                    <label className="label"><span className="label-text">Name</span></label>
+                    <label className="label"><span className="label-text text-black">Name</span></label>
                     <input 
                         type="text" 
-                        className="input input-bordered"
+                        className="input input-bordered text-black bg-white border border-gray-300"
                         value={formData.senderInfo.name}
                         onChange={(e) => handleChange('senderInfo', 'name', e.target.value)}
                         required
@@ -150,19 +150,19 @@ const CreateParcel = () => {
                     />
                 </div>
                 <div className="form-control">
-                    <label className="label"><span className="label-text">Contact</span></label>
+                    <label className="label"><span className="label-text text-black">Contact</span></label>
                     <input 
                         type="text" 
-                        className="input input-bordered"
+                        className="input input-bordered text-black bg-white border border-gray-300"
                         value={formData.senderInfo.contact}
                         onChange={(e) => handleChange('senderInfo', 'contact', e.target.value)}
                         required
                     />
                 </div>
                 <div className="form-control">
-                    <label className="label"><span className="label-text">Region</span></label>
+                    <label className="label"><span className="label-text text-black">Region</span></label>
                     <select 
-                        className="select select-bordered"
+                        className="select select-bordered text-black bg-white border border-gray-300"
                         value={formData.senderInfo.region}
                         onChange={(e) => handleChange('senderInfo', 'region', e.target.value)}
                         required
@@ -172,9 +172,9 @@ const CreateParcel = () => {
                     </select>
                 </div>
                 <div className="form-control">
-                    <label className="label"><span className="label-text">Service Center</span></label>
+                    <label className="label"><span className="label-text text-black">Service Center</span></label>
                     <select 
-                        className="select select-bordered"
+                        className="select select-bordered text-black bg-white border border-gray-300"
                         value={formData.senderInfo.serviceCenter}
                         onChange={(e) => handleChange('senderInfo', 'serviceCenter', e.target.value)}
                         required
@@ -184,19 +184,19 @@ const CreateParcel = () => {
                     </select>
                 </div>
                 <div className="form-control md:col-span-2">
-                    <label className="label"><span className="label-text">Address</span></label>
+                    <label className="label"><span className="label-text text-black">Address</span></label>
                     <textarea 
-                        className="textarea textarea-bordered"
+                        className="textarea textarea-bordered text-black bg-white border border-gray-300"
                         value={formData.senderInfo.address}
                         onChange={(e) => handleChange('senderInfo', 'address', e.target.value)}
                         required
                     ></textarea>
                 </div>
                 <div className="form-control md:col-span-2">
-                    <label className="label"><span className="label-text">Pickup Instruction</span></label>
+                    <label className="label"><span className="label-text text-black">Pickup Instruction</span></label>
                     <input 
                         type="text" 
-                        className="input input-bordered"
+                        className="input input-bordered text-black bg-white border border-gray-300"
                         value={formData.senderInfo.instruction}
                         onChange={(e) => handleChange('senderInfo', 'instruction', e.target.value)}
                     />
@@ -206,32 +206,32 @@ const CreateParcel = () => {
 
         {/* Receiver Info */}
         <section className="space-y-4">
-            <h3 className="text-lg font-semibold border-b pb-2">Receiver Information</h3>
+            <h3 className="text-lg font-semibold border-b pb-2 text-black">Receiver Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="form-control">
-                    <label className="label"><span className="label-text">Name</span></label>
+                    <label className="label"><span className="label-text text-black">Name</span></label>
                     <input 
                         type="text" 
-                        className="input input-bordered"
+                        className="input input-bordered text-black bg-white border border-gray-300"
                         value={formData.receiverInfo.name}
                         onChange={(e) => handleChange('receiverInfo', 'name', e.target.value)}
                         required
                     />
                 </div>
                 <div className="form-control">
-                    <label className="label"><span className="label-text">Contact</span></label>
+                    <label className="label"><span className="label-text text-black">Contact</span></label>
                     <input 
                         type="text" 
-                        className="input input-bordered"
+                        className="input input-bordered text-black bg-white border border-gray-300"
                         value={formData.receiverInfo.contact}
                         onChange={(e) => handleChange('receiverInfo', 'contact', e.target.value)}
                         required
                     />
                 </div>
                 <div className="form-control">
-                    <label className="label"><span className="label-text">Region</span></label>
+                    <label className="label"><span className="label-text text-black">Region</span></label>
                     <select 
-                        className="select select-bordered"
+                        className="select select-bordered text-black bg-white border border-gray-300"
                         value={formData.receiverInfo.region}
                         onChange={(e) => handleChange('receiverInfo', 'region', e.target.value)}
                         required
@@ -241,9 +241,9 @@ const CreateParcel = () => {
                     </select>
                 </div>
                 <div className="form-control">
-                    <label className="label"><span className="label-text">Service Center</span></label>
+                    <label className="label"><span className="label-text text-black">Service Center</span></label>
                     <select 
-                        className="select select-bordered"
+                        className="select select-bordered text-black bg-white border border-gray-300"
                         value={formData.receiverInfo.serviceCenter}
                         onChange={(e) => handleChange('receiverInfo', 'serviceCenter', e.target.value)}
                         required
@@ -253,19 +253,19 @@ const CreateParcel = () => {
                     </select>
                 </div>
                 <div className="form-control md:col-span-2">
-                    <label className="label"><span className="label-text">Address</span></label>
+                    <label className="label"><span className="label-text text-black">Address</span></label>
                     <textarea 
-                        className="textarea textarea-bordered"
+                        className="textarea textarea-bordered text-black bg-white border border-gray-300"
                         value={formData.receiverInfo.address}
                         onChange={(e) => handleChange('receiverInfo', 'address', e.target.value)}
                         required
                     ></textarea>
                 </div>
                 <div className="form-control md:col-span-2">
-                    <label className="label"><span className="label-text">Delivery Instruction</span></label>
+                    <label className="label"><span className="label-text text-black">Delivery Instruction</span></label>
                     <input 
                         type="text" 
-                        className="input input-bordered"
+                        className="input input-bordered text-black bg-white border border-gray-300"
                         value={formData.receiverInfo.instruction}
                         onChange={(e) => handleChange('receiverInfo', 'instruction', e.target.value)}
                     />
@@ -274,8 +274,8 @@ const CreateParcel = () => {
         </section>
 
         <div className="flex items-center justify-between pt-6 border-t">
-            <div className="text-xl font-bold">
-                Total Cost: <span className="text-[#CAEB66] bg-black px-2 py-1 rounded">৳{cost}</span>
+            <div className="text-xl font-bold text-black">
+                Total Cost: <span className="text-black bg-white border border-gray-300 px-2 py-1 rounded">৳{cost}</span>
             </div>
             <button
                 type="submit"

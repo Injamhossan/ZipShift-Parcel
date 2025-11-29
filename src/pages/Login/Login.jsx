@@ -25,21 +25,53 @@ const Login = () => {
       try {
         const response = await signInWithEmail(data.email, data.password);
         if (response.success) {
-          login(response.user, response.token);
-          toast.success('Login successful!');
-          navigate('/dashboard');
+          // Set token first so interceptor works
+          login(null, response.token); 
+          
+          // Fetch DB user profile
+          try {
+             const dbUser = await authApi.getCurrentUser({ _skipAuthRedirect: true });
+             // Merge firebase user with db user if needed, but DB user should be source of truth
+             // Ensure role is present
+             const finalUser = { ...dbUser.data.user, role: dbUser.data.role || dbUser.data.user.role };
+             login(finalUser, response.token);
+             toast.success('Login successful!');
+             navigate('/dashboard');
+          } catch (dbError) {
+             console.error('Failed to fetch DB profile:', dbError);
+             
+             if (dbError.response?.status === 404 || dbError.response?.status === 401) {
+                 toast.error('User profile not found. Please register.');
+                 // Optional: Redirect to register or handle as new user
+                 // For now, we can logout from firebase to be safe, or redirect to register
+                 // useAuthStore.getState().logout();
+                 // navigate('/register');
+                 
+                 // OR allow them to proceed as "incomplete" user if that's the flow
+                 // But based on the issue, we want to stop the loop.
+                 // Let's redirect to register if not found.
+                 navigate('/register');
+             } else {
+                 toast.error('Login successful but failed to load profile');
+                 // Fallback to firebase user but role will be missing
+                 login(response.user, response.token);
+                 navigate('/dashboard');
+             }
+          }
         }
       } catch (firebaseError) {
         // Fallback to API if Firebase fails
         const response = await authApi.login(data);
         if (response.success) {
-          login(response.user, response.token);
+          const finalUser = { ...response.data.user, role: response.data.role || response.data.user.role };
+          login(finalUser, response.token);
           toast.success('Login successful!');
           navigate('/dashboard');
         }
       }
     } catch (error) {
       console.error('Login error:', error);
+      toast.error('Login failed');
     } finally {
       setLoading(false);
     }
@@ -50,9 +82,35 @@ const Login = () => {
     try {
       const response = await signInWithGoogle();
       if (response.success) {
-        login(response.user, response.token);
-        toast.success('Login successful!');
-        navigate('/dashboard');
+         // Set token first
+         login(null, response.token);
+         
+         // Fetch DB user profile
+         try {
+            const dbUser = await authApi.getCurrentUser({ _skipAuthRedirect: true });
+            const finalUser = { ...dbUser.data.user, role: dbUser.data.role || dbUser.data.user.role };
+            login(finalUser, response.token);
+            toast.success('Login successful!');
+            navigate('/dashboard');
+         } catch (dbError) {
+            console.error('Failed to fetch DB profile:', dbError);
+            
+            if (dbError.response?.status === 404 || dbError.response?.status === 401) {
+                // User not in DB. 
+                // For Google Sign In, we might want to AUTO-REGISTER them?
+                // The authController.register handles creation. 
+                // But we are calling getCurrentUser here.
+                // If getCurrentUser fails, it means they are not in DB.
+                // We should probably call a register endpoint or redirect to register page.
+                // Since this is Google Sign In, let's try to register them automatically or redirect.
+                
+                // If we redirect to register, they can fill in extra details.
+                toast.error('Please complete your registration.');
+                navigate('/register');
+            } else {
+                toast.error('Failed to load profile');
+            }
+         }
       }
     } catch (error) {
       console.error('Google sign-in error:', error);

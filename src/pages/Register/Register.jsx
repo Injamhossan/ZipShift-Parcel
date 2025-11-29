@@ -54,7 +54,10 @@ const Register = () => {
               uid: response.user.uid, // Firebase UID
               password: data.password, // Send password for backend to hash
               role: data.role || 'merchant',
-            });
+              vehicleType: data.vehicleType,
+              vehicleNumber: data.vehicleNumber,
+              licenseNumber: data.licenseNumber,
+            }, response.token);
             
             console.log('User saved to backend database:', backendResponse);
             toast.success('User registered successfully in database!');
@@ -80,7 +83,10 @@ const Register = () => {
             phone: data.phone,
             password: data.password,
             role: data.role || 'merchant',
-          });
+            vehicleType: data.vehicleType,
+            vehicleNumber: data.vehicleNumber,
+            licenseNumber: data.licenseNumber,
+          }, response.token);
           
           console.log('Backend registration response:', response);
           
@@ -124,7 +130,7 @@ const Register = () => {
             role: selectedRole,
             photoURL: response.user.photoURL,
             // No password for Google sign-in
-          });
+          }, response.token);
           
           console.log('Google user saved to backend database:', backendResponse);
           toast.success('User registered successfully in database!');
@@ -292,6 +298,84 @@ const Register = () => {
                   </p>
                 )}
               </div>
+
+              {/* Rider Specific Fields */}
+              {selectedRole === 'rider' && (
+                <>
+                  {/* Vehicle Type */}
+                  <div>
+                    <label
+                      htmlFor="vehicleType"
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                    >
+                      Vehicle Type
+                    </label>
+                    <select
+                      id="vehicleType"
+                      {...register('vehicleType', {
+                        required: selectedRole === 'rider' ? 'Vehicle type is required' : false,
+                      })}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl text-black focus:outline-none focus:ring-2 focus:ring-[#CAEB66]"
+                    >
+                      <option value="bike">Bike</option>
+                      <option value="car">Car</option>
+                      <option value="van">Van</option>
+                    </select>
+                  </div>
+
+                  {/* Vehicle Number */}
+                  <div>
+                    <label
+                      htmlFor="vehicleNumber"
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                    >
+                      Vehicle Number
+                    </label>
+                    <input
+                      id="vehicleNumber"
+                      type="text"
+                      {...register('vehicleNumber', {
+                        required: selectedRole === 'rider' ? 'Vehicle number is required' : false,
+                      })}
+                      className={`w-full px-4 py-3 border rounded-xl text-black focus:outline-none focus:ring-2 focus:ring-[#CAEB66] ${
+                        errors.vehicleNumber ? 'border-red-500' : 'border-gray-300'
+                      }`}
+                      placeholder="Enter vehicle number"
+                    />
+                    {errors.vehicleNumber && (
+                      <p className="mt-1 text-sm text-red-600">
+                        {errors.vehicleNumber.message}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* License Number */}
+                  <div>
+                    <label
+                      htmlFor="licenseNumber"
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                    >
+                      Driving License Number
+                    </label>
+                    <input
+                      id="licenseNumber"
+                      type="text"
+                      {...register('licenseNumber', {
+                        required: selectedRole === 'rider' ? 'License number is required' : false,
+                      })}
+                      className={`w-full px-4 py-3 border rounded-xl text-black focus:outline-none focus:ring-2 focus:ring-[#CAEB66] ${
+                        errors.licenseNumber ? 'border-red-500' : 'border-gray-300'
+                      }`}
+                      placeholder="Enter license number"
+                    />
+                    {errors.licenseNumber && (
+                      <p className="mt-1 text-sm text-red-600">
+                        {errors.licenseNumber.message}
+                      </p>
+                    )}
+                  </div>
+                </>
+              )}
 
               {/* Password Field */}
               <div>

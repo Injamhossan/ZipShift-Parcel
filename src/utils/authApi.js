@@ -31,6 +31,12 @@ api.interceptors.response.use(
   (error) => {
     const status = error.response?.status;
     const data = error.response?.data;
+    const originalRequest = error.config;
+
+    // Check if the request explicitly asked to skip auth redirect
+    if (originalRequest?._skipAuthRedirect) {
+      return Promise.reject(error);
+    }
 
     if (status === 401) {
       useAuthStore.getState().logout();
@@ -94,8 +100,8 @@ export const authApi = {
   },
 
   // GET CURRENT USER
-  getCurrentUser: async () => {
-    const res = await api.get('/auth/me');
+  getCurrentUser: async (config = {}) => {
+    const res = await api.get('/auth/me', config);
     return res.data;
   },
 
@@ -175,6 +181,17 @@ export const parcelApi = {
       throw error;
     }
   },
+
+  assignRider: async (parcelId, data) => {
+    try {
+      const res = await api.put(`/parcels/${parcelId}/assign`, data);
+      return res.data;
+    } catch (error) {
+      const msg = error.response?.data?.message || 'Failed to assign rider';
+      if (error.response?.status !== 401) toast.error(msg);
+      throw error;
+    }
+  },
 };
 
 // -------------------------------------------------------------------------
@@ -188,6 +205,16 @@ export const paymentApi = {
 
   confirmPayment: async (data) => {
     const res = await api.post('/payment/confirm', data);
+    return res.data;
+  },
+};
+
+// -------------------------------------------------------------------------
+//                                STATS API
+// -------------------------------------------------------------------------
+export const statsApi = {
+  getStats: async () => {
+    const res = await api.get('/stats');
     return res.data;
   },
 };

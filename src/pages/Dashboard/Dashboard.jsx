@@ -5,14 +5,28 @@ import { signOutUser } from "../../utils/firebaseAuth";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 
-const navItems = [
-  { label: "Overview", icon: "fa-gauge", to: "/dashboard/overview" },
-  { label: "Parcels", icon: "fa-boxes-stacked", to: "/dashboard/parcels" },
-  { label: "Create Parcel", icon: "fa-plus", to: "/dashboard/create-parcel" },
-  { label: "Tracking", icon: "fa-location-dot", to: "/dashboard/tracking" },
-  { label: "Billing", icon: "fa-file-invoice-dollar", to: "/dashboard/billing" },
-  { label: "Support", icon: "fa-headset", to: "/dashboard/support" },
-  { label: "Profile", icon: "fa-user", to: "/dashboard/profile" },
+const userNavItems = [
+  { label: "Overview", icon: "fa-gauge", to: "/dashboard/user-overview" },
+  { label: "Add Parcel", icon: "fa-plus", to: "/dashboard/create-parcel" },
+  { label: "Parcels to Pay", icon: "fa-file-invoice-dollar", to: "/dashboard/parcel-to-pay" },
+  { label: "Manage Parcels", icon: "fa-boxes-stacked", to: "/dashboard/manage-parcel" },
+  { label: "Payment History", icon: "fa-clock-rotate-left", to: "/dashboard/payment-history" },
+  { label: "Settings", icon: "fa-user-gear", to: "/dashboard/settings" },
+];
+
+const adminNavItems = [
+  { label: "Overview", icon: "fa-gauge", to: "/dashboard/admin-overview" },
+  { label: "Manage Users", icon: "fa-users", to: "/dashboard/manage-users" },
+  { label: "Manage Riders", icon: "fa-motorcycle", to: "/dashboard/manage-riders" },
+  { label: "Delivery Management", icon: "fa-truck-fast", to: "/dashboard/delivery-management" },
+  { label: "Settings", icon: "fa-user-gear", to: "/dashboard/settings" },
+];
+
+const riderNavItems = [
+  { label: "Overview", icon: "fa-gauge", to: "/dashboard/rider-overview" },
+  { label: "Parcels to Pickup", icon: "fa-box-open", to: "/dashboard/parcel-to-pickup" },
+  { label: "Parcels to Deliver", icon: "fa-truck-ramp-box", to: "/dashboard/parcel-to-delivery" },
+  { label: "Settings", icon: "fa-user-gear", to: "/dashboard/settings" },
 ];
 
 const Dashboard = () => {
@@ -29,6 +43,17 @@ const Dashboard = () => {
       console.error("Logout error:", error);
     }
   };
+
+  const getNavItems = () => {
+    console.log('Dashboard User:', user);
+    switch (user?.role) {
+      case 'admin': return adminNavItems;
+      case 'rider': return riderNavItems;
+      default: return userNavItems;
+    }
+  };
+
+  const navItems = getNavItems();
 
   return (
     <div className="py-8 px-4 mx-auto max-w-[1850px] ">
@@ -57,7 +82,7 @@ const Dashboard = () => {
                 )}
               </div>
               <div>
-                <p className="text-sm text-black">Merchant</p>
+                <p className="text-sm text-black capitalize">{user?.role || 'User'}</p>
                 <h2 className="font-semibold text-black">
                   {user?.displayName || user?.name || "ZipShift User"}
                 </h2>
@@ -85,9 +110,6 @@ const Dashboard = () => {
             </nav>
 
             <div className="pt-6 border-t border-gray-100 space-y-3">
-              <button className="btn btn-sm hover:bg-[#CAEB66] btn-outline w-full border-[#CAEB66] text-black">
-                Merchant Guide
-              </button>
               <button
                 onClick={handleLogout}
                 className="btn btn-sm bg-red-500 border-none text-white w-full"

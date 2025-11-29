@@ -1,45 +1,72 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { parcelApi, paymentApi } from "../../../utils/authApi";
-import useDashboardStore from "../../../store/dashboardStore";
-import PaymentModal from "../../../components/Payment/PaymentModal";
+import useAuthStore from "../../../store/authStore";
+import { useNavigate } from "react-router-dom";
 
 const CreateParcel = () => {
-  const [parcel, setParcel] = useState({
-    customerName: "",
-    customerPhone: "",
-    address: "",
-    weight: "",
-    cod: "",
-    note: "",
-    pickupOption: "rider",
+  const { user } = useAuthStore();
+  const navigate = useNavigate();
+  
+  const [formData, setFormData] = useState({
+    parcelType: 'non-document',
+    weight: '',
+    senderInfo: {
+      name: user?.name || '',
+      contact: user?.phone || '',
+      region: '',
+      serviceCenter: '',
+      address: user?.address || '',
+      instruction: ''
+    },
+    receiverInfo: {
+      name: '',
+      contact: '',
+      region: '',
+      serviceCenter: '',
+      address: '',
+      instruction: ''
+    }
   });
 
+  const [cost, setCost] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [paymentModal, setPaymentModal] = useState({
-    isOpen: false,
-    clientSecret: "",
-    parcelId: "",
-    amount: 0
-  });
 
-  const { prependParcel } = useDashboardStore();
+  // Mock regions and service centers
+  const regions = ['Dhaka', 'Chittagong', 'Sylhet', 'Khulna'];
+  const serviceCenters = ['Center A', 'Center B', 'Center C'];
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setParcel((prev) => ({ ...prev, [name]: value }));
+  useEffect(() => {
+    calculateCost();
+  }, [formData.parcelType, formData.weight, formData.senderInfo.serviceCenter, formData.receiverInfo.serviceCenter]);
+
+  const calculateCost = () => {
+    let baseCost = 60;
+    if (formData.parcelType === 'document') {
+        baseCost = 50;
+    } else {
+        const weight = parseFloat(formData.weight) || 0;
+        baseCost += weight * 20;
+    }
+
+    // Inter-district charge (mock logic)
+    if (formData.senderInfo.serviceCenter && formData.receiverInfo.serviceCenter && 
+        formData.senderInfo.serviceCenter !== formData.receiverInfo.serviceCenter) {
+        baseCost += 40;
+    }
+
+    setCost(baseCost);
   };
 
-  const resetForm = () => {
-    setParcel({
-      customerName: "",
-      customerPhone: "",
-      address: "",
-      weight: "",
-      cod: "",
-      note: "",
-      pickupOption: "rider",
-    });
+  const handleChange = (section, field, value) => {
+    if (section === 'root') {
+        setFormData(prev => ({ ...prev, [field]: value }));
+    } else {
+        setFormData(prev => ({
+            ...prev,
+            [section]: { ...prev[section], [field]: value }
+        }));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -47,263 +74,219 @@ const CreateParcel = () => {
     setIsSubmitting(true);
     try {
       const payload = {
-        ...parcel,
-        weight: parseFloat(parcel.weight),
-        cod: Number(parcel.cod),
+        ...formData,
+        weight: formData.parcelType === 'document' ? 0 : parseFloat(formData.weight),
+        cost
       };
-      const response = await parcelApi.createParcel(payload);
-      const createdParcel = response?.data || response;
       
-      if (createdParcel) {
-        // Calculate delivery fee (Mock calculation: 60 base + 20 per kg)
-        const deliveryFee = 60 + (parseFloat(parcel.weight) * 20);
-        
-        // Create payment intent
-        const intentResponse = await paymentApi.createIntent({
-          amount: deliveryFee,
-          parcelId: createdParcel._id || createdParcel.id
-        });
-
-        setPaymentModal({
-          isOpen: true,
-          clientSecret: intentResponse.clientSecret,
-          parcelId: createdParcel._id || createdParcel.id,
-          amount: deliveryFee
-        });
-
-        prependParcel(createdParcel);
-        toast.success("Parcel created! Please complete payment.");
-        resetForm();
+      const response = await parcelApi.createParcel(payload);
+      
+      if (response.success) {
+        toast.success(`Parcel created! Cost: ৳${cost}`);
+        navigate('/dashboard/parcel-to-pay');
       }
     } catch (error) {
       console.error("Parcel create failed", error);
-      toast.error(
-        error?.response?.data?.message || "Failed to create parcel request"
-      );
+      toast.error(error?.response?.data?.message || "Failed to create parcel");
     } finally {
       setIsSubmitting(false);
-    }
-  };
-
-  const handlePaymentSuccess = async (paymentIntent) => {
-    try {
-      await paymentApi.confirmPayment({
-        paymentIntentId: paymentIntent.id,
-        parcelId: paymentModal.parcelId
-      });
-      
-      toast.success("Payment successful! Parcel status updated.");
-      setPaymentModal(prev => ({ ...prev, isOpen: false }));
-      
-      // Optionally refresh parcels list here if needed
-    } catch (error) {
-      console.error("Payment confirmation failed", error);
-      toast.error("Payment confirmed but failed to update parcel status");
     }
   };
 
   return (
     <div className="space-y-6">
       <header>
-        <p className="text-sm uppercase tracking-wide text-black">
-          Book pickup
-        </p>
-        <h1 className="text-3xl font-bold text-black">
-          Create a new parcel
-        </h1>
+        <h1 className="text-3xl font-bold text-black">Create a New Parcel</h1>
+        <p className="text-gray-500">Fill in the details below to book a delivery.</p>
       </header>
 
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 space-y-6"
-      >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="form-control space-y-2">
-            <label className="label">
-              <span className="label-text font-medium text-black">
-                Customer name
-              </span>
-            </label>
-            <input
-              type="text"
-              name="customerName"
-              value={parcel.customerName}
-              onChange={handleChange}
-              className="input text-black input-bordered bg-gray-50"
-              placeholder="Md. Rahim"
-              required
-            />
-          </div>
-          <div className="form-control space-y-2">
-            <label className="label">
-              <span className="label-text font-medium text-black">
-                Phone number
-              </span>
-            </label>
-            <input
-              type="tel"
-              name="customerPhone"
-              value={parcel.customerPhone}
-              onChange={handleChange}
-              className="input text-black input-bordered bg-gray-50"
-              placeholder="01XXXXXXXXX"
-              required
-            />
-          </div>
-        </div>
-
-        <div className="form-control space-y-2">
-          <label className="label">
-            <span className="label-text font-medium text-black">
-              Delivery address
-            </span>
-          </label>
-          <textarea
-            name="address"
-            value={parcel.address}
-            onChange={handleChange}
-            className="textarea text-black textarea-bordered bg-gray-50"
-            placeholder="Road 2, House 11, Mirpur DOHS"
-            rows={3}
-            required
-          ></textarea>
-        </div>
-
-        <div className="space-y-3 border border-dashed border-gray-200 rounded-2xl p-4 bg-gray-50/60">
-          <p className="text-sm uppercase tracking-wide text-black">
-            Pickup preference
-          </p>
-          <div className="flex flex-wrap gap-3">
-            {[
-              {
-                value: "rider",
-                title: "ZipShift rider",
-                description: "Our rider picks up from your address",
-                icon: "fa-motorcycle",
-              },
-              {
-                value: "merchant",
-                title: "Drop to hub",
-                description: "You will deliver parcels to the nearest hub",
-                icon: "fa-store",
-              },
-            ].map((option) => {
-              const isActive = parcel.pickupOption === option.value;
-              return (
-                <button
-                  type="button"
-                  key={option.value}
-                  onClick={() =>
-                    setParcel((prev) => ({
-                      ...prev,
-                      pickupOption: option.value,
-                    }))
-                  }
-                  className={`flex-1 min-w-[240px] border rounded-2xl p-4 text-left transition ${
-                    isActive
-                      ? "border-[#CAEB66] bg-white shadow"
-                      : "border-gray-200 bg-white/70 hover:border-[#CAEB66]"
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
-                      <i className={`fa-solid ${option.icon}`}></i>
-                    </span>
-                    <div>
-                      <p className="font-semibold text-black">{option.title}</p>
-                      <p className="text-sm text-black/70">
-                        {option.description}
-                      </p>
+      <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 space-y-8">
+        
+        {/* Parcel Info */}
+        <section className="space-y-4">
+            <h3 className="text-lg font-semibold border-b pb-2">Parcel Information</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="form-control">
+                    <label className="label"><span className="label-text">Type</span></label>
+                    <select 
+                        className="select select-bordered"
+                        value={formData.parcelType}
+                        onChange={(e) => handleChange('root', 'parcelType', e.target.value)}
+                    >
+                        <option value="document">Document</option>
+                        <option value="non-document">Non-Document</option>
+                    </select>
+                </div>
+                {formData.parcelType === 'non-document' && (
+                    <div className="form-control">
+                        <label className="label"><span className="label-text">Weight (KG)</span></label>
+                        <input 
+                            type="number" 
+                            className="input input-bordered"
+                            value={formData.weight}
+                            onChange={(e) => handleChange('root', 'weight', e.target.value)}
+                            required
+                            min="0.1"
+                            step="0.1"
+                        />
                     </div>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </div>
+                )}
+            </div>
+        </section>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="form-control space-y-2">
-            <label className="label">
-              <span className="label-text font-medium text-black">
-                Parcel weight
-              </span>
-            </label>
-            <select
-              name="weight"
-              value={parcel.weight}
-              onChange={handleChange}
-              className="select text-black select-bordered bg-gray-50"
-              required
+        {/* Sender Info */}
+        <section className="space-y-4">
+            <h3 className="text-lg font-semibold border-b pb-2">Sender Information</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="form-control">
+                    <label className="label"><span className="label-text">Name</span></label>
+                    <input 
+                        type="text" 
+                        className="input input-bordered"
+                        value={formData.senderInfo.name}
+                        onChange={(e) => handleChange('senderInfo', 'name', e.target.value)}
+                        required
+                        readOnly // Prefilled
+                    />
+                </div>
+                <div className="form-control">
+                    <label className="label"><span className="label-text">Contact</span></label>
+                    <input 
+                        type="text" 
+                        className="input input-bordered"
+                        value={formData.senderInfo.contact}
+                        onChange={(e) => handleChange('senderInfo', 'contact', e.target.value)}
+                        required
+                    />
+                </div>
+                <div className="form-control">
+                    <label className="label"><span className="label-text">Region</span></label>
+                    <select 
+                        className="select select-bordered"
+                        value={formData.senderInfo.region}
+                        onChange={(e) => handleChange('senderInfo', 'region', e.target.value)}
+                        required
+                    >
+                        <option value="">Select Region</option>
+                        {regions.map(r => <option key={r} value={r}>{r}</option>)}
+                    </select>
+                </div>
+                <div className="form-control">
+                    <label className="label"><span className="label-text">Service Center</span></label>
+                    <select 
+                        className="select select-bordered"
+                        value={formData.senderInfo.serviceCenter}
+                        onChange={(e) => handleChange('senderInfo', 'serviceCenter', e.target.value)}
+                        required
+                    >
+                        <option value="">Select Center</option>
+                        {serviceCenters.map(c => <option key={c} value={c}>{c}</option>)}
+                    </select>
+                </div>
+                <div className="form-control md:col-span-2">
+                    <label className="label"><span className="label-text">Address</span></label>
+                    <textarea 
+                        className="textarea textarea-bordered"
+                        value={formData.senderInfo.address}
+                        onChange={(e) => handleChange('senderInfo', 'address', e.target.value)}
+                        required
+                    ></textarea>
+                </div>
+                <div className="form-control md:col-span-2">
+                    <label className="label"><span className="label-text">Pickup Instruction</span></label>
+                    <input 
+                        type="text" 
+                        className="input input-bordered"
+                        value={formData.senderInfo.instruction}
+                        onChange={(e) => handleChange('senderInfo', 'instruction', e.target.value)}
+                    />
+                </div>
+            </div>
+        </section>
+
+        {/* Receiver Info */}
+        <section className="space-y-4">
+            <h3 className="text-lg font-semibold border-b pb-2">Receiver Information</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="form-control">
+                    <label className="label"><span className="label-text">Name</span></label>
+                    <input 
+                        type="text" 
+                        className="input input-bordered"
+                        value={formData.receiverInfo.name}
+                        onChange={(e) => handleChange('receiverInfo', 'name', e.target.value)}
+                        required
+                    />
+                </div>
+                <div className="form-control">
+                    <label className="label"><span className="label-text">Contact</span></label>
+                    <input 
+                        type="text" 
+                        className="input input-bordered"
+                        value={formData.receiverInfo.contact}
+                        onChange={(e) => handleChange('receiverInfo', 'contact', e.target.value)}
+                        required
+                    />
+                </div>
+                <div className="form-control">
+                    <label className="label"><span className="label-text">Region</span></label>
+                    <select 
+                        className="select select-bordered"
+                        value={formData.receiverInfo.region}
+                        onChange={(e) => handleChange('receiverInfo', 'region', e.target.value)}
+                        required
+                    >
+                        <option value="">Select Region</option>
+                        {regions.map(r => <option key={r} value={r}>{r}</option>)}
+                    </select>
+                </div>
+                <div className="form-control">
+                    <label className="label"><span className="label-text">Service Center</span></label>
+                    <select 
+                        className="select select-bordered"
+                        value={formData.receiverInfo.serviceCenter}
+                        onChange={(e) => handleChange('receiverInfo', 'serviceCenter', e.target.value)}
+                        required
+                    >
+                        <option value="">Select Center</option>
+                        {serviceCenters.map(c => <option key={c} value={c}>{c}</option>)}
+                    </select>
+                </div>
+                <div className="form-control md:col-span-2">
+                    <label className="label"><span className="label-text">Address</span></label>
+                    <textarea 
+                        className="textarea textarea-bordered"
+                        value={formData.receiverInfo.address}
+                        onChange={(e) => handleChange('receiverInfo', 'address', e.target.value)}
+                        required
+                    ></textarea>
+                </div>
+                <div className="form-control md:col-span-2">
+                    <label className="label"><span className="label-text">Delivery Instruction</span></label>
+                    <input 
+                        type="text" 
+                        className="input input-bordered"
+                        value={formData.receiverInfo.instruction}
+                        onChange={(e) => handleChange('receiverInfo', 'instruction', e.target.value)}
+                    />
+                </div>
+            </div>
+        </section>
+
+        <div className="flex items-center justify-between pt-6 border-t">
+            <div className="text-xl font-bold">
+                Total Cost: <span className="text-[#CAEB66] bg-black px-2 py-1 rounded">৳{cost}</span>
+            </div>
+            <button
+                type="submit"
+                className="btn bg-[#CAEB66] border-none text-black px-10 hover:bg-[#b8d955]"
+                disabled={isSubmitting}
             >
-              <option value="">Select weight</option>
-              <option value="0.5">0.5 KG</option>
-              <option value="1">1 KG</option>
-              <option value="1.5">1.5 KG</option>
-              <option value="2">2 KG</option>
-              <option value="3">3 KG</option>
-              <option value="4">4 KG</option>
-              <option value="5">5 KG</option>
-              <option value="6">6 KG</option>
-              <option value="7">7 KG</option>
-              <option value="8">8 KG</option>
-              <option value="9">9 KG</option>
-              <option value="10">10 KG</option>
-            </select>
-          </div>
-
-          <div className="form-control space-y-2">
-            <label className="label">
-              <span className="label-text font-medium text-black">
-                COD amount
-              </span>
-            </label>
-            <input
-              type="number"
-              name="cod"
-              value={parcel.cod}
-              onChange={handleChange}
-              className="input text-black input-bordered bg-gray-50"
-              placeholder="৳550"
-              required
-            />
-          </div>
-
-          <div className="form-control space-y-2">
-            <label className="label">
-              <span className="label-text font-medium text-black">
-                Special note
-              </span>
-            </label>
-            <input
-              type="text"
-              name="note"
-              value={parcel.note}
-              onChange={handleChange}
-              className="input text-black input-bordered bg-gray-50"
-              placeholder="Fragile / pay by bkash"
-            />
-          </div>
+                {isSubmitting ? 'Submitting...' : 'Confirm & Submit'}
+            </button>
         </div>
 
-        <div className="flex justify-end">
-          <button
-            type="submit"
-            className="btn bg-[#CAEB66] border-none text-black px-10"
-            disabled={isSubmitting}
-          >
-            Submit parcel
-          </button>
-        </div>
       </form>
-
-      <PaymentModal 
-        isOpen={paymentModal.isOpen}
-        clientSecret={paymentModal.clientSecret}
-        amount={paymentModal.amount}
-        onClose={() => setPaymentModal(prev => ({ ...prev, isOpen: false }))}
-        onSuccess={handlePaymentSuccess}
-      />
     </div>
   );
 };

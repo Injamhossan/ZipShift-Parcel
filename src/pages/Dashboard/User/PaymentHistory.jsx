@@ -12,13 +12,11 @@ const PaymentHistory = () => {
   const fetchPaidParcels = async () => {
     try {
       // Fetching all parcels and filtering for now, ideally backend should support payment history endpoint
-      const response = await parcelApi.getAllParcels({ status: 'paid' }); 
-      // Also include delivered as they are paid
-      // This is a simplification. Real payment history should come from a Payment collection.
+      const response = await parcelApi.getAllParcels({ paymentStatus: 'paid' }); 
       
       if (response.success) {
         // Filter locally if needed or rely on backend filter
-        const paidItems = response.data.results.filter(p => p.paymentStatus === 'paid' || p.status === 'paid' || p.status === 'delivered');
+        const paidItems = response.data.results;
         setParcels(paidItems);
       }
     } catch (error) {
@@ -52,13 +50,13 @@ const PaymentHistory = () => {
             {parcels.length > 0 ? (
                 parcels.map((parcel) => (
                 <tr key={parcel.id}>
-                    <td className="text-sm">{new Date(parcel.updatedAt).toLocaleDateString()}</td>
-                    <td className="font-mono text-xs">{parcel.trackingId}</td>
+                    <td className="text-sm text-black">{new Date(parcel.updatedAt).toLocaleDateString()}</td>
+                    <td className="font-mono text-xs text-black">{parcel.trackingId}</td>
                     <td className="font-bold text-green-600">৳{parcel.cost}</td>
                     <td>
                         <div className="badge badge-success gap-2">Paid</div>
                     </td>
-                    <td className="text-xs uppercase">Card</td>
+                    <td className="text-xs uppercase text-black">Card</td>
                 </tr>
                 ))
             ) : (

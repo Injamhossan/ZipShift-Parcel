@@ -3,9 +3,12 @@ import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import CheckoutForm from './CheckoutForm';
 
-// Initialize Stripe outside of component to avoid recreating it on every render
-// We need to get the key from env
+
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+
+if (!import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY) {
+  console.error("Stripe Publishable Key is missing!");
+}
 
 const PaymentModal = ({ isOpen, onClose, clientSecret, onSuccess, amount }) => {
   if (!isOpen || !clientSecret) return null;

@@ -36,10 +36,19 @@ const PayParcel = () => {
 
   const initiatePayment = async (amount) => {
     try {
-      const response = await paymentApi.createIntent({ amount, currency: 'bdt' }); // Assuming API expects amount
+      console.log('Initiating payment for amount:', amount, 'Parcel ID:', id);
+      const response = await paymentApi.createIntent({ 
+        amount, 
+        currency: 'bdt',
+        parcelId: id 
+      });
+      console.log('Payment intent response:', response);
       if (response.clientSecret) {
         setClientSecret(response.clientSecret);
         setShowModal(true);
+      } else {
+        console.error('No client secret received');
+        toast.error('Failed to initialize payment: No client secret');
       }
     } catch (error) {
       console.error('Payment init failed', error);
@@ -49,12 +58,11 @@ const PayParcel = () => {
 
   const handlePaymentSuccess = async (paymentIntent) => {
     try {
-        await parcelApi.updateParcel(id, { 
-            paymentStatus: 'paid',
-            status: 'paid' // or whatever the next status should be
+        console.log('Payment succeeded, confirming with backend:', paymentIntent.id);
+        await paymentApi.confirmPayment({
+            paymentIntentId: paymentIntent.id,
+            parcelId: id
         });
-        // Also call the specific payment status endpoint if it exists
-        // await parcelApi.updatePaymentStatus(id, { paymentStatus: 'paid' });
         
         toast.success('Payment successful!');
         navigate('/dashboard/payment-history');

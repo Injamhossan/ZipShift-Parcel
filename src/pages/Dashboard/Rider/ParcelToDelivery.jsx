@@ -39,7 +39,7 @@ const ParcelToDelivery = () => {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-2xl font-bold">Parcels to Deliver</h1>
+        <h1 className="text-2xl font-bold text-black">Parcels to Deliver</h1>
       </header>
 
       <div className="space-y-4">

@@ -8,8 +8,9 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
   const { isAuthenticated, user: storeUser, token } = useAuthStore();
   const { data: queryUser, isLoading, isError } = useUser();
 
-  // Use queryUser if available (it's fresher), otherwise storeUser
-  const user = queryUser || storeUser;
+  // Prioritize storeUser because it's the source of truth for UI (Sidebar, Redirects)
+  // queryUser is used for background validation/updates
+  const user = storeUser || queryUser;
 
   console.log('ProtectedRoute Check:', { 
     isAuthenticated, 

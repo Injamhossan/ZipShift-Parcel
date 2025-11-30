@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
+import { useQueryClient } from '@tanstack/react-query';
 import { authApi } from '../../utils/authApi';
 import { signUpWithEmail, signInWithGoogle } from '../../utils/firebaseAuth';
 import useAuthStore from '../../store/authStore';
@@ -12,6 +13,7 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuthStore();
+  const queryClient = useQueryClient();
   const {
     register,
     handleSubmit,
@@ -61,17 +63,25 @@ const Register = () => {
             
             console.log('User saved to backend database:', backendResponse);
             toast.success('User registered successfully in database!');
+            
+            // Use backend user data which includes the role
+            const dbUser = backendResponse.data.user;
+            const finalUser = { ...dbUser, role: backendResponse.data.role || dbUser.role };
+            
+            login(finalUser, response.token);
+            queryClient.invalidateQueries(['user']);
+            toast.success('Registration successful!');
+            navigate('/dashboard');
           } catch (backendError) {
             // If backend save fails, show error but don't block registration
             console.error('Failed to save user to backend database:', backendError);
             console.error('Error details:', backendError.response?.data || backendError.message);
             toast.error('Registration successful but failed to save to database. Please contact support.');
-            // User is still registered in Firebase, so continue
+            // User is still registered in Firebase, so continue with Firebase user (role will be missing)
+            login(response.user, response.token);
+            queryClient.invalidateQueries(['user']);
+            navigate('/dashboard');
           }
-          
-          login(response.user, response.token);
-          toast.success('Registration successful!');
-          navigate('/dashboard');
         }
       } catch (firebaseError) {
         // Fallback to API if Firebase fails
@@ -134,17 +144,25 @@ const Register = () => {
           
           console.log('Google user saved to backend database:', backendResponse);
           toast.success('User registered successfully in database!');
+          
+          // Use backend user data
+          const dbUser = backendResponse.data.user;
+          const finalUser = { ...dbUser, role: backendResponse.data.role || dbUser.role };
+          
+          login(finalUser, response.token);
+          queryClient.invalidateQueries(['user']);
+          toast.success('Registration successful!');
+          navigate('/dashboard');
         } catch (backendError) {
           // If backend save fails, show error but don't block registration
           console.error('Failed to save Google user to backend database:', backendError);
           console.error('Error details:', backendError.response?.data || backendError.message);
           toast.error('Registration successful but failed to save to database. Please contact support.');
           // User is still registered in Firebase, so continue
+          login(response.user, response.token);
+          queryClient.invalidateQueries(['user']);
+          navigate('/dashboard');
         }
-        
-        login(response.user, response.token);
-        toast.success('Registration successful!');
-        navigate('/dashboard');
       }
     } catch (error) {
       console.error('Google sign-in error:', error);

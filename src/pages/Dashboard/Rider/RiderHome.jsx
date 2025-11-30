@@ -33,25 +33,25 @@ const RiderHome = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="stat bg-white shadow-sm border border-gray-100 rounded-2xl">
-          <div className="stat-title">Total Earnings</div>
+          <div className="stat-title text-black">Total Earnings</div>
           <div className="stat-value text-success">৳{stats?.earnings || 0}</div>
-          <div className="stat-desc">Lifetime earnings</div>
+          <div className="stat-desc text-black">Lifetime earnings</div>
         </div>
         <div className="stat bg-white shadow-sm border border-gray-100 rounded-2xl">
-          <div className="stat-title">To Pickup</div>
+          <div className="stat-title text-black">To Pickup</div>
           <div className="stat-value text-primary">{stats?.parcelsToPickup || 0}</div>
-          <div className="stat-desc">Pending pickups</div>
+          <div className="stat-desc text-black">Pending pickups</div>
         </div>
         <div className="stat bg-white shadow-sm border border-gray-100 rounded-2xl">
-          <div className="stat-title">To Deliver</div>
+          <div className="stat-title text-black">To Deliver</div>
           <div className="stat-value text-secondary">{stats?.parcelsToDeliver || 0}</div>
-          <div className="stat-desc">Pending deliveries</div>
+          <div className="stat-desc text-black">Pending deliveries</div>
         </div>
       </div>
       
       <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-        <h3 className="font-bold mb-4">Total Deliveries Completed</h3>
-        <div className="text-4xl font-bold">{stats?.totalDeliveries || 0}</div>
+        <h3 className="font-bold mb-4 text-black">Total Deliveries Completed</h3>
+        <div className="text-4xl font-bold text-black">{stats?.totalDeliveries || 0}</div>
       </div>
     </div>
   );

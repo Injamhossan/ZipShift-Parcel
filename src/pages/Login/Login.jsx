@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
+import { useQueryClient } from '@tanstack/react-query';
 import { authApi } from '../../utils/authApi';
 import { signInWithEmail, signInWithGoogle } from '../../utils/firebaseAuth';
 import useAuthStore from '../../store/authStore';
@@ -12,6 +13,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuthStore();
+  const queryClient = useQueryClient();
   const {
     register,
     handleSubmit,
@@ -35,6 +37,7 @@ const Login = () => {
              // Ensure role is present
              const finalUser = { ...dbUser.data.user, role: dbUser.data.role || dbUser.data.user.role };
              login(finalUser, response.token);
+             queryClient.invalidateQueries(['user']);
              toast.success('Login successful!');
              navigate('/dashboard');
           } catch (dbError) {
@@ -55,6 +58,7 @@ const Login = () => {
                  toast.error('Login successful but failed to load profile');
                  // Fallback to firebase user but role will be missing
                  login(response.user, response.token);
+                 queryClient.invalidateQueries(['user']);
                  navigate('/dashboard');
              }
           }
@@ -65,6 +69,7 @@ const Login = () => {
         if (response.success) {
           const finalUser = { ...response.data.user, role: response.data.role || response.data.user.role };
           login(finalUser, response.token);
+          queryClient.invalidateQueries(['user']);
           toast.success('Login successful!');
           navigate('/dashboard');
         }
@@ -90,6 +95,7 @@ const Login = () => {
             const dbUser = await authApi.getCurrentUser({ _skipAuthRedirect: true });
             const finalUser = { ...dbUser.data.user, role: dbUser.data.role || dbUser.data.user.role };
             login(finalUser, response.token);
+            queryClient.invalidateQueries(['user']);
             toast.success('Login successful!');
             navigate('/dashboard');
          } catch (dbError) {

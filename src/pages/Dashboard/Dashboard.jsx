@@ -1,5 +1,6 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { NavLink, Outlet } from "react-router-dom";
+import { Loader1 } from "../../components/Loader/Loader";
 import useAuthStore from "../../store/authStore";
 import { signOutUser } from "../../utils/firebaseAuth";
 import { useNavigate } from "react-router-dom";
@@ -45,7 +46,7 @@ const Dashboard = () => {
   };
 
   const getNavItems = () => {
-    console.log('Dashboard User:', user);
+  
     switch (user?.role) {
       case 'admin': return adminNavItems;
       case 'rider': return riderNavItems;
@@ -120,7 +121,9 @@ const Dashboard = () => {
           </aside>
 
           <main className="flex-1 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-            <Outlet />
+            <Suspense fallback={<div className="h-full flex items-center justify-center"><Loader1 /></div>}>
+              <Outlet />
+            </Suspense>
           </main>
         </div>
       </div>

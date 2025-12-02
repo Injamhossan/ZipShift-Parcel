@@ -12,13 +12,7 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
   // queryUser is used for background validation/updates
   const user = storeUser || queryUser;
 
-  console.log('ProtectedRoute Check:', { 
-    isAuthenticated, 
-    userRole: user?.role, 
-    allowedRoles,
-    path: window.location.pathname,
-    isLoading
-  });
+
 
   if (isLoading && token) {
     return <div className="h-screen flex items-center justify-center"><Loader1 /></div>;

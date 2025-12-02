@@ -7,6 +7,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
+    
   },
   "dependencies": {
     "@stripe/react-stripe-js": "^5.4.1",

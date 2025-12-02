@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import useAuthStore from '../../store/authStore';
 import { authApi } from '../../utils/authApi';
 import { toast } from 'react-hot-toast';
+import { storage } from '../../Firebase/firebase.config';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const Settings = () => {
   const { user, updateUser } = useAuthStore();
@@ -15,6 +17,7 @@ const Settings = () => {
   const [loading, setLoading] = useState(false);
 
   const [isEditing, setIsEditing] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   // Populate form data when user is available
   React.useEffect(() => {
@@ -24,13 +27,38 @@ const Settings = () => {
             phone: user.phone || '',
             address: user.address || '',
             company: user.company || '',
-            pickupArea: user.pickupArea || ''
+            pickupArea: user.pickupArea || '',
+            photoURL: user.photoURL || user.photo || user.avatar || user.image || ''
         });
     }
   }, [user]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploadingImage(true);
+    try {
+      const storageRef = ref(storage, `profile-photos/${user._id || user.uid}/${file.name}`);
+      await uploadBytes(storageRef, file);
+      const downloadURL = await getDownloadURL(storageRef);
+      
+      setFormData(prev => ({ ...prev, photoURL: downloadURL }));
+      toast.success('Image uploaded successfully! Click Save Changes to apply.');
+
+    } catch (error) {
+      if (error.code === 'storage/unauthorized') {
+          toast.error('Permission denied. Please check Firebase Storage rules.');
+      } else {
+          toast.error(`Failed to upload image: ${error.message}`);
+      }
+    } finally {
+      setUploadingImage(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -72,6 +100,48 @@ const Settings = () => {
 
       <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 max-w-2xl">
         <h3 className="font-bold text-lg mb-4 text-black">Profile Details</h3>
+        
+        {/* Photo Upload Section */}
+        <div className="mb-6 flex items-center gap-6">
+            <div className="avatar placeholder">
+                {formData.photoURL ? (
+                    <div className="w-24 h-24 rounded-full ring ring-[#CAEB66] ring-offset-base-100 ring-offset-2">
+                        <img src={formData.photoURL} alt="Profile" />
+                    </div>
+                ) : (
+                    <div className="bg-neutral-focus text-neutral-content rounded-full w-24 h-24 flex items-center justify-center bg-gray-200">
+                        <span className="text-3xl font-bold text-gray-500">{formData.name?.charAt(0)?.toUpperCase() || 'U'}</span>
+                    </div>
+                )}
+            </div>
+            
+            {isEditing && (
+                <div>
+                    <label className="block mb-2 text-sm font-medium text-gray-900">Update Photo</label>
+                    <input 
+                        type="file" 
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="file-input file-input-bordered file-input-sm w-full max-w-xs bg-white text-black mb-2"
+                        disabled={uploadingImage}
+                    />
+                    {uploadingImage && <p className="text-xs text-gray-500 mt-1">Uploading...</p>}
+                    
+                    <div className="divider text-xs text-gray-400 my-1">OR</div>
+                    
+                    <input 
+                        type="text" 
+                        name="photoURL"
+                        value={formData.photoURL}
+                        onChange={handleChange}
+                        placeholder="Paste image URL here"
+                        className="input input-bordered input-sm w-full max-w-xs bg-white text-black border border-black"
+                        disabled={uploadingImage}
+                    />
+                </div>
+            )}
+        </div>
+
         <form onSubmit={handleSubmit} className="space-y-4">
             <div className="form-control">
                 <label className="label"><span className="label-text text-black">Name</span></label>

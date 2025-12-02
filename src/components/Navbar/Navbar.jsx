@@ -121,12 +121,6 @@ const Navbar = () => {
                     </Link>
                   </li>
                   <li>
-                    <a className="text-[#606060]">Profile</a>
-                  </li>
-                  <li>
-                    <a className="text-[#606060]">Settings</a>
-                  </li>
-                  <li>
                     <a onClick={handleLogout} className="text-red-600">
                       Logout
                     </a>

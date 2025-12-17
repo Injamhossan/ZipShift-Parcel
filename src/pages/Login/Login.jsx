@@ -41,20 +41,13 @@ const Login = () => {
              toast.success('Login successful!');
              navigate('/dashboard');
           } catch (dbError) {
-             console.error('Failed to fetch DB profile:', dbError);
+             console.warn('User profile not found in DB, redirecting to register...');
              
              if (dbError.response?.status === 404 || dbError.response?.status === 401) {
-                 toast.error('User profile not found. Please register.');
-                 // Optional: Redirect to register or handle as new user
-                 // For now, we can logout from firebase to be safe, or redirect to register
-                 // useAuthStore.getState().logout();
-                 // navigate('/register');
-                 
-                 // OR allow them to proceed as "incomplete" user if that's the flow
-                 // But based on the issue, we want to stop the loop.
-                 // Let's redirect to register if not found.
+                 toast.error('Profile not found. Please complete registration.');
                  navigate('/register');
              } else {
+                 console.error('Failed to fetch DB profile:', dbError);
                  toast.error('Login successful but failed to load profile');
                  // Fallback to firebase user but role will be missing
                  login(response.user, response.token);
@@ -87,39 +80,37 @@ const Login = () => {
     try {
       const response = await signInWithGoogle();
       if (response.success) {
-         // Set token first
-         login(null, response.token);
-         
-         // Fetch DB user profile
-         try {
-            const dbUser = await authApi.getCurrentUser({ _skipAuthRedirect: true });
-            const finalUser = { ...dbUser.data.user, role: dbUser.data.role || dbUser.data.user.role };
-            login(finalUser, response.token);
-            queryClient.invalidateQueries(['user']);
-            toast.success('Login successful!');
-            navigate('/dashboard');
-         } catch (dbError) {
+        login(null, response.token);
+
+        try {
+          const dbUser = await authApi.getCurrentUser({
+            headers: { Authorization: `Bearer ${response.token}` },
+            _skipAuthRedirect: true,
+          });
+
+          const finalUser = { ...dbUser.data.user, role: dbUser.data.role || dbUser.data.user.role };
+          login(finalUser, response.token);
+          queryClient.invalidateQueries(['user']);
+          toast.success('Login successful!');
+          navigate('/dashboard');
+        } catch (dbError) {
+          console.warn('User profile not found in DB, redirecting to register...');
+
+          if (dbError.response?.status === 404 || dbError.response?.status === 401) {
+            toast.error('Profile not found. Please complete registration.');
+            navigate('/register');
+          } else {
             console.error('Failed to fetch DB profile:', dbError);
-            
-            if (dbError.response?.status === 404 || dbError.response?.status === 401) {
-                // User not in DB. 
-                // For Google Sign In, we might want to AUTO-REGISTER them?
-                // The authController.register handles creation. 
-                // But we are calling getCurrentUser here.
-                // If getCurrentUser fails, it means they are not in DB.
-                // We should probably call a register endpoint or redirect to register page.
-                // Since this is Google Sign In, let's try to register them automatically or redirect.
-                
-                // If we redirect to register, they can fill in extra details.
-                toast.error('Please complete your registration.');
-                navigate('/register');
-            } else {
-                toast.error('Failed to load profile');
-            }
-         }
+            toast.error('Login successful but failed to load profile');
+            login(response.user, response.token);
+            queryClient.invalidateQueries(['user']);
+            navigate('/dashboard');
+          }
+        }
       }
     } catch (error) {
       console.error('Google sign-in error:', error);
+      toast.error('Google sign-in failed');
     } finally {
       setLoading(false);
     }

@@ -10,11 +10,11 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 
   // Prioritize storeUser because it's the source of truth for UI (Sidebar, Redirects)
   // queryUser is used for background validation/updates
-  const user = storeUser || queryUser;
+  const user = queryUser || storeUser;
 
+  const isUserLoading = isLoading && (!storeUser || !storeUser.role);
 
-
-  if (isLoading && token) {
+  if ((isUserLoading || isLoading) && token && !user) {
     return <div className="h-screen flex items-center justify-center"><Loader1 /></div>;
   }
 
@@ -30,7 +30,7 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
       // If user is loaded but role is missing/wrong
       if (user) {
           console.warn(`Access denied. User role '${userRole}' not in [${allowedRoles}]`);
-          return <Navigate to="/dashboard" replace />;
+          return <Navigate to="/" replace />;
       }
       // If user is not loaded yet (should be covered by isLoading, but just in case)
       return null; 

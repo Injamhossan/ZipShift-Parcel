@@ -1,5 +1,35 @@
 import React from 'react';
 import { createBrowserRouter, Navigate } from "react-router-dom";
+import Root from "../Root/Root";
+import ProtectedRoute from "../components/ProtectedRoute/ProtectedRoute";
+import ErrorPage from "../pages/Error/ErrorPage"
+import Home from "../pages/Home/Home"
+import AboutUs from "../pages/About Us/AboutUs"
+import Services from "../pages/Services/Services"
+import Pricing from "../pages/Pricing/Pricing"
+import Coverage from "../pages/Coverage/Coverage";
+import ContactUs from "../pages/Contact/ContactUs";
+import Blog from "../pages/Blog/Blog";
+import Login from "../pages/Login/Login";
+import Register from "../pages/Register/Register";
+import Dashboard from "../pages/Dashboard/Dashboard";
+import DashboardRedirect from "../pages/Dashboard/sections/DashboardOverview";
+import UserHome from "../pages/Dashboard/User/UserHome";
+import CreateParcel from "../pages/Dashboard/sections/CreateParcel";
+import ParcelToPay from "../pages/Dashboard/User/ParcelToPay";
+import PayParcel from "../pages/Dashboard/User/PayParcel";
+import ManageParcel from "../pages/Dashboard/User/ManageParcel";
+import PaymentHistory from "../pages/Dashboard/User/PaymentHistory";
+import AdminHome from "../pages/Dashboard/Admin/AdminHome";
+import ManageUsers from "../pages/Dashboard/Admin/ManageUsers";
+import ManageRiders from "../pages/Dashboard/Admin/ManageRiders";
+import DeliveryManagement from "../pages/Dashboard/Admin/DeliveryManagement";
+import RiderHome from "../pages/Dashboard/Rider/RiderHome"; 
+import ParcelToPickup from "../pages/Dashboard/Rider/ParcelToPickup";
+import ParcelToDelivery from "../pages/Dashboard/Rider/ParcelToDelivery";
+import Settings from "../pages/Dashboard/Settings";
+
+
 
 
 
@@ -21,12 +51,12 @@ const router = createBrowserRouter([
 
       // Dashboard
       {
-        path: 'dashboard',
-        element: (
-          <ProtectedRoute allowedRoles={['user', 'admin', 'rider']}>
-            <Dashboard />
-          </ProtectedRoute>
-        ),
+path: 'dashboard',
+  element: (
+    <ProtectedRoute allowedRoles={['user', 'admin', 'rider']}>
+      <Dashboard />
+    </ProtectedRoute>
+  ),
         children: [
           { index: true, element: <DashboardRedirect /> },
 

@@ -1,25 +1,38 @@
-import axios from 'axios';
-import { toast } from 'react-hot-toast';
-import useAuthStore from '../store/authStore';
+import axios from "axios";
+import { toast } from "react-hot-toast";
+import useAuthStore from "../store/authStore";
 
 // -------- BASE URL --------
-const API_URL =
-  import.meta.env.VITE_API_BASE_URL
-    ? `${import.meta.env.VITE_API_BASE_URL}/api`
-    : 'https://zip-shift-server.vercel.app/api';
+// src/utils/authApi.js
+const getBaseUrl = () => {
+  let url = import.meta.env.VITE_API_BASE_URL || "https://zip-shift-server.vercel.app";
+  // Remove trailing headers
+  url = url.replace(/\/+$/, '');
+  // Remove trailing /api if present to standardize
+  url = url.replace(/\/api$/, '');
+  // Append /api
+  return `${url}/api`;
+};
+
+const API_URL = getBaseUrl();
 
 // -------- AXIOS INSTANCE --------
 const api = axios.create({
   baseURL: API_URL,
-  headers: { 'Content-Type': 'application/json' },
+  headers: { "Content-Type": "application/json" },
   withCredentials: false,
 });
 
 // -------- REQUEST INTERCEPTOR (Attach Token) --------
 api.interceptors.request.use(
   (config) => {
-    const token = useAuthStore.getState().token;
-    if (token) config.headers.Authorization = `Bearer ${token}`;
+    try {
+      const token = useAuthStore.getState()?.token;
+      if (!config.headers) config.headers = {};
+      if (token) config.headers.Authorization = `Bearer ${token}`;
+    } catch (err) {
+      // ignore store read errors
+    }
     return config;
   },
   (error) => Promise.reject(error)
@@ -39,11 +52,12 @@ api.interceptors.response.use(
     }
 
     if (status === 401) {
+      // Just clear local state, let Router handle redirection
       useAuthStore.getState().logout();
-      window.location.href = '/login';
-    } else if (status === 404 && data?.code === 'USER_NOT_FOUND') {
-      // User authenticated in Firebase but not in DB -> Redirect to Register
-      window.location.href = '/register';
+    } else if (status === 404 && data?.code === "USER_NOT_FOUND") {
+      // User authenticated in Firebase but not in DB
+       toast.error("Account not found. Please register.");
+       // Optional: could redirect to register via router if we had access to navigate
     }
 
     return Promise.reject(error);
@@ -53,7 +67,7 @@ api.interceptors.response.use(
 // -------- SEPARATE INSTANCE FOR FIREBASE REGISTER ONLY --------
 const unprotectedApi = axios.create({
   baseURL: API_URL,
-  headers: { 'Content-Type': 'application/json' },
+  headers: { "Content-Type": "application/json" },
 });
 
 // -------------------------------------------------------------------------
@@ -63,22 +77,18 @@ export const authApi = {
   // REGISTER (Firebase token required)
   register: async (userData, firebaseToken) => {
     try {
-      const response = await unprotectedApi.post(
-        '/auth/register',
-        userData,
-        {
-          headers: firebaseToken
-            ? { Authorization: `Bearer ${firebaseToken}` }
-            : {},
-        }
-      );
+      const response = await unprotectedApi.post("/auth/register", userData, {
+        headers: firebaseToken
+          ? { Authorization: `Bearer ${firebaseToken}` }
+          : {},
+      });
 
       return response.data;
     } catch (error) {
       const message =
         error.response?.data?.message ||
         error.response?.data?.error ||
-        'Registration failed';
+        "Registration failed";
 
       if (error.response?.status !== 401) toast.error(message);
       throw error;
@@ -88,11 +98,10 @@ export const authApi = {
   // LOGIN
   login: async (credentials) => {
     try {
-      const response = await api.post('/auth/login', credentials);
+      const response = await api.post("/auth/login", credentials);
       return response.data;
     } catch (error) {
-      const message =
-        error.response?.data?.message || 'Login failed';
+      const message = error.response?.data?.message || "Login failed";
 
       if (error.response?.status !== 401) toast.error(message);
       throw error;
@@ -101,18 +110,18 @@ export const authApi = {
 
   // GET CURRENT USER
   getCurrentUser: async (config = {}) => {
-    const res = await api.get('/auth/me', config);
+    const res = await api.get("/auth/me", config);
     return res.data;
   },
 
   // UPDATE PROFILE
   updateProfile: async (userData) => {
     try {
-      const res = await api.patch('/profile', userData);
+      const res = await api.patch("/profile", userData);
       return res.data;
     } catch (error) {
       if (error.response?.status !== 401) {
-        const msg = error.response?.data?.message || 'Update failed';
+        const msg = error.response?.data?.message || "Update failed";
         toast.error(msg);
       }
       throw error;
@@ -125,31 +134,31 @@ export const authApi = {
 // -------------------------------------------------------------------------
 export const parcelApi = {
   testConnection: async () => {
-    const res = await api.get('/test');
+    const res = await api.get("/test");
     return res.data;
   },
 
   healthCheck: async () => {
-    const res = await api.get('/health');
+    const res = await api.get("/health");
     return res.data;
   },
 
   getAllParcels: async (params = {}) => {
-    const res = await api.get('/parcels', { params });
+    const res = await api.get("/parcels", { params });
     return res.data;
   },
 
   getAllRiders: async () => {
-    const res = await api.get('/riders');
+    const res = await api.get("/riders");
     return res.data;
   },
 
   createParcel: async (parcelData) => {
     try {
-      const res = await api.post('/parcels', parcelData);
+      const res = await api.post("/parcels", parcelData);
       return res.data;
     } catch (error) {
-      const msg = error.response?.data?.message || 'Failed to create parcel';
+      const msg = error.response?.data?.message || "Failed to create parcel";
       if (error.response?.status !== 401) toast.error(msg);
       throw error;
     }
@@ -165,7 +174,7 @@ export const parcelApi = {
       const res = await api.put(`/parcels/${parcelId}`, parcelData);
       return res.data;
     } catch (error) {
-      const msg = error.response?.data?.message || 'Failed to update parcel';
+      const msg = error.response?.data?.message || "Failed to update parcel";
       if (error.response?.status !== 401) toast.error(msg);
       throw error;
     }
@@ -176,7 +185,7 @@ export const parcelApi = {
       const res = await api.delete(`/parcels/${parcelId}`);
       return res.data;
     } catch (error) {
-      const msg = error.response?.data?.message || 'Failed to delete parcel';
+      const msg = error.response?.data?.message || "Failed to delete parcel";
       if (error.response?.status !== 401) toast.error(msg);
       throw error;
     }
@@ -187,7 +196,7 @@ export const parcelApi = {
       const res = await api.put(`/parcels/${parcelId}/assign`, data);
       return res.data;
     } catch (error) {
-      const msg = error.response?.data?.message || 'Failed to assign rider';
+      const msg = error.response?.data?.message || "Failed to assign rider";
       if (error.response?.status !== 401) toast.error(msg);
       throw error;
     }
@@ -199,12 +208,12 @@ export const parcelApi = {
 // -------------------------------------------------------------------------
 export const paymentApi = {
   createIntent: async (data) => {
-    const res = await api.post('/payment/create-intent', data);
+    const res = await api.post("/payment/create-intent", data);
     return res.data;
   },
 
   confirmPayment: async (data) => {
-    const res = await api.post('/payment/confirm', data);
+    const res = await api.post("/payment/confirm", data);
     return res.data;
   },
 };
@@ -214,7 +223,7 @@ export const paymentApi = {
 // -------------------------------------------------------------------------
 export const statsApi = {
   getStats: async () => {
-    const res = await api.get('/stats');
+    const res = await api.get("/stats");
     return res.data;
   },
 };

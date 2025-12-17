@@ -69,7 +69,7 @@ const Register = () => {
             const finalUser = { ...dbUser, role: backendResponse.data.role || dbUser.role };
             
             login(finalUser, response.token);
-            queryClient.invalidateQueries(['user']);
+            queryClient.setQueryData(['user'], finalUser);
             toast.success('Registration successful!');
             navigate('/dashboard');
           } catch (backendError) {
@@ -79,7 +79,7 @@ const Register = () => {
             toast.error('Registration successful but failed to save to database. Please contact support.');
             // User is still registered in Firebase, so continue with Firebase user (role will be missing)
             login(response.user, response.token);
-            queryClient.invalidateQueries(['user']);
+            queryClient.setQueryData(['user'], response.user);
             navigate('/dashboard');
           }
         }
@@ -150,7 +150,8 @@ const Register = () => {
           const finalUser = { ...dbUser, role: backendResponse.data.role || dbUser.role };
           
           login(finalUser, response.token);
-          queryClient.invalidateQueries(['user']);
+          // Manually set cache to avoid immediate refetch race condition
+          queryClient.setQueryData(['user'], finalUser);
           toast.success('Registration successful!');
           navigate('/dashboard');
         } catch (backendError) {
@@ -160,7 +161,7 @@ const Register = () => {
           toast.error('Registration successful but failed to save to database. Please contact support.');
           // User is still registered in Firebase, so continue
           login(response.user, response.token);
-          queryClient.invalidateQueries(['user']);
+          queryClient.setQueryData(['user'], response.user);
           navigate('/dashboard');
         }
       }
@@ -307,7 +308,7 @@ const Register = () => {
                     errors.role ? 'border-red-500' : 'border-gray-300'
                   }`}
                 >
-                  <option value="merchant">Merchant (send parcels)</option>
+                  <option value="user">User (send parcels)</option>
                   <option value="rider">Rider (deliver parcels)</option>
                 </select>
                 {errors.role && (

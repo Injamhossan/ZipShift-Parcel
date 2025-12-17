@@ -12,10 +12,19 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
   // queryUser is used for background validation/updates
   const user = queryUser || storeUser;
 
-  const isUserLoading = isLoading && (!storeUser || !storeUser.role);
-
-  if ((isUserLoading || isLoading) && token && !user) {
-    return <div className="h-screen flex items-center justify-center"><Loader1 /></div>;
+  const isRoleMissing = user && !user.role;
+  
+  // Wait if:
+  // 1. We have a token (authentication claimed)
+  // 2. AND we are either still loading the query
+  // 3. OR we have a user but no role yet (and query is still running or we just entered)
+  if (token && (isLoading || !user || isRoleMissing)) {
+     // But don't wait forever if query failed or finished without giving us a role
+     if (!isLoading && user && !user.role) {
+         // Fall through to access denied
+     } else {
+         return <div className="h-screen flex items-center justify-center"><Loader1 /></div>;
+     }
   }
 
   if (!isAuthenticated && !token) {

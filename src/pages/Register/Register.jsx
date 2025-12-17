@@ -72,11 +72,13 @@ const Register = () => {
             queryClient.setQueryData(['user'], finalUser);
             toast.success('Registration successful!');
             navigate('/dashboard');
+            navigate('/dashboard');
           } catch (backendError) {
             // If backend save fails, show error but don't block registration
             console.error('Failed to save user to backend database:', backendError);
-            console.error('Error details:', backendError.response?.data || backendError.message);
-            toast.error('Registration successful but failed to save to database. Please contact support.');
+            const errorMsg = backendError.response?.data?.message || backendError.message || 'Unknown error';
+            toast.error(`Database Error: ${errorMsg}`);
+            
             // User is still registered in Firebase, so continue with Firebase user (role will be missing)
             login(response.user, response.token);
             queryClient.setQueryData(['user'], response.user);
@@ -157,8 +159,9 @@ const Register = () => {
         } catch (backendError) {
           // If backend save fails, show error but don't block registration
           console.error('Failed to save Google user to backend database:', backendError);
-          console.error('Error details:', backendError.response?.data || backendError.message);
-          toast.error('Registration successful but failed to save to database. Please contact support.');
+          const errorMsg = backendError.response?.data?.message || backendError.message || 'Unknown error';
+          toast.error(`Database Error: ${errorMsg}`);
+          
           // User is still registered in Firebase, so continue
           login(response.user, response.token);
           queryClient.setQueryData(['user'], response.user);

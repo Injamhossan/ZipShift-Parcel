@@ -1,16 +1,66 @@
-# React + Vite
+# ZipShift Parcel (Frontend)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the frontend application for **ZipShift Parcel**, a modern delivery management platform built with React and Vite. It offers a seamless user experience for managing parcels, tracking deliveries, and handling payments.
 
-Currently, two official plugins are available:
+## 🚀 Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Framework:** [React](https://react.dev/) with [Vite](https://vitejs.dev/)
+- **Styling:** [Tailwind CSS v4](https://tailwindcss.com/) & [DaisyUI](https://daisyui.com/)
+- **State Management:** [Zustand](https://github.com/pmndrs/zustand)
+- **Data Fetching:** [TanStack Query (React Query)](https://tanstack.com/query/latest)
+- **Authentication:** [Firebase](https://firebase.google.com/)
+- **Routing:** [React Router v7](https://reactrouter.com/)
+- **Payments:** [Stripe](https://stripe.com/)
+- **Visuals:** [Framer Motion](https://www.framer.com/motion/) (Animations), [Recharts](https://recharts.org/) (Charts)
 
-## React Compiler
+## 🛠️ Installation & Setup
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+1.  **Clone the repository** (if not already done).
+2.  **Navigate to the frontend directory**:
+    ```bash
+    cd ZipShift-Parcel
+    ```
+3.  **Install dependencies**:
+    ```bash
+    npm install
+    ```
+4.  **Set up Environment Variables**:
+    Create a `.env` file in the root of the `ZipShift-Parcel` directory. You will need to add your Firebase configuration, Stripe public key, and backend URL.
+    *Example:*
+    ```env
+    VITE_API_URL=http://localhost:5000
+    VITE_FIREBASE_API_KEY=...
+    VITE_STRIPE_PUBLIC_KEY=...
+    ```
 
-## Expanding the ESLint configuration
+## 🏃‍♂️ Running the App
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+To start the development server:
+
+```bash
+npm run dev
+```
+
+The app will typically run at `http://localhost:5173`.
+
+## 📦 Building for Production
+
+To create a production build:
+
+```bash
+npm run build
+```
+
+To preview the production build:
+
+```bash
+npm run preview
+```
+
+## 📂 Project Structure
+
+- `src/components`: Reusable UI components.
+- `src/pages`: Main application pages.
+- `src/hooks`: Custom React hooks.
+- `src/store`: Zustand store definitions.
+- `src/utils`: Helper functions and configurations (e.g., Firebase).
